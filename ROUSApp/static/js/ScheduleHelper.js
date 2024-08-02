@@ -139,17 +139,24 @@ async function loadTableData(planeMap, partMap, tailNums) {
 
 // uses GET api call to get all plane maintenances from selected plane
 async function getPlaneMaintenances(TailNumber) {
-    return fetch(base + 'plane-data/' + TailNumber + '/')
-        .then(response => response.json())
-        .then(pdata => {
-            return fetch(base + 'plane-maintenance/' + pdata.PlaneSN + '/' + pdata.MDS + '/')
-                .then(response => response.json())
-                .then(data => {
-                    return data;
-                })
-                .catch(error => console.warn(error));
-        })
-        .catch(error => console.warn(error));
+    try {
+        const response = await fetch(base + 'plane-data/' + TailNumber + '/');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const pdata = await response.json();
+
+        const maintenanceResponse = await fetch(base + 'plane-maintenance/' + pdata.PlaneSN + '/' + pdata.MDS + '/');
+        if (!maintenanceResponse.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await maintenanceResponse.json();
+
+        return data;
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+        return []; // Return an empty array or handle as needed
+    }
 }
 
 // uses GET api call to get all part maintenances from selected plane
