@@ -1,1 +1,1 @@
-web: gunicorn ROUSProj.ROUSProj.wsgi:application --log-file -
+web: gunicorn ROUSProj.wsgi:application --log-file -
