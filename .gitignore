@@ -1,5 +1,5 @@
-ROUSProj/env/
-ROUSProj/venv/
+ROUS/env/
+ROUS/venv/
 env/
 venv/
 my_django_app/ROUSProj/env/
@@ -7,5 +7,5 @@ my_django_app/ROUSProj/venv/
 ROUSProj/ROUSProj/__pycache__
 ROUSProj/ROUSApp/__pycache__
 .gitignore
-ROUSProj/ROUSApp/__pycache__/
-ROUSProj/ROUSProj/__pycache__/
+ROUSApp/__pycache__/
+ROUSProj/__pycache__/
