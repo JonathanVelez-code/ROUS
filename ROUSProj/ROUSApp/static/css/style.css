@@ -109,10 +109,10 @@ body {
 .content {
     flex: 1;
     display: flex;
-    color: #ffffff;
     background-color: #242435;
     justify-content: center;
     align-items: center;
+    color: #0a090c;
 }
 
 .boxcontent {
@@ -132,6 +132,140 @@ body {
     color: #ffffff;
     border: 1px solid #5882FD;
     border-radius: 4px;
+}
+
+.dropzone-box {
+    border-radius: 1rem;
+    min-width: 25rem;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    max-width: 36rem;
+    border: 1px solid #EDF1F3;
+    width: 100%;
+    background: #fff;
+}
+
+.dropzone-box h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.6rem;
+    color: #211E30;
+}
+
+.dropzone-box p {
+    font-size: 1.15rem;
+    color: #D3D3D3;
+}
+
+.dropzone-area {
+    padding: 1rem;
+    position: relative;
+    margin-top: 1.5rem;
+    min-height: 16rem;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 2px dashed #D4DCE6;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dropzone-description {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.dropzone-area .file-info {
+    font-size: 1.1rem;
+}
+
+.dropzone-area [type="file"] {
+    cursor: pointer;
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.dropzone-area .file-upload-icon svg {
+    height: 6rem;
+    max-width: 6rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    stroke: #211E30;
+}
+
+.dropzone-area:hover {
+    background: var(--dropzone-over);
+}
+
+.dropzone--over {
+    border: 2px solid var(--primary);
+    background: var(--dropzone-over);
+}
+
+.dropzone-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    gap: 1rem;
+}
+
+.dropzone-actions button {
+    flex-grow: 1;
+    min-height: 3rem;
+    font-size: 1.2rem;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+.dropzone-help {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dropzone-actions button[type='reset'] {
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    color: #0a090c;
+    background: #FEFFFF;
+    cursor: pointer;
+    border: 1px solid #D4DCE6;
+    transition: all 0.3s ease;
+}
+
+.dropzone-actions button[type='reset']:hover {
+    border: 1px solid #2d59fa;
+    color: var(--primary);
+}
+
+.dropzone-actions button[type='submit'] {
+    background: #2d59fa;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    color: #F2F7FE;
+    border: none;
+    cursor: pointer;
+}
+
+.dropzone-actions button[type='submit']:hover {
+    background: #0037ff;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 12rem;
 }
 
 .custom-file-upload {
@@ -276,18 +410,22 @@ input[type="text"] {
     margin-right: 5px;
 }
 
-.modal-fade {
+.display {
     display: none;
-    /* Hide the modal by default */
+}
+
+.modal-fade {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: fixed;
     z-index: 99;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
-    /* Semi-transparent black background */
+    /*overflow: auto;*/
 }
 
 .modal-struct {
@@ -296,7 +434,9 @@ input[type="text"] {
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
-    max-width: 500px;
+    max-width: 800px;
+    border-radius: 15px;
+    box-shadow: 9px 10px 5px 0px rgba(0, 0, 0, 0.45);
 }
 
 .modal-struct p {
@@ -304,15 +444,63 @@ input[type="text"] {
 }
 
 .modal-struct input {
-    width: 100%;
     padding: 5px;
     border: 1px solid #ccc;
-    border-radius: 3px;
+    border-radius: 5px;
+}
+
+.expand-label input {
+    width: 80%;
+    height: 40px;
+}
+
+.required-a:after {
+    content: " *";
+    color: red;
+}
+
+.required-text {
+    color: red;
+}
+
+.required-b:before {
+    content: "* ";
+    color: red;
+}
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+}
+
+.layout label {
+    font-size: 1.2rem;
+}
+
+.center-align h3 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.organize {
+    display: grid;
+    grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
+}
+
+.colmflex {
+    display: flex;
+    flex-direction: column;
+}
+
+.invalid-input {
+    border: 2px solid red;
 }
 
 .buttonSaveCal {
     padding: 8px 12px;
-    background-color: #4CAF50;
+    background-color: #04AA6D;
     color: white;
     border: none;
     border-radius: 4px;
@@ -328,12 +516,22 @@ input[type="text"] {
     cursor: pointer;
 }
 
-.red-asterisk {
-    color: red;
+.buttonNext {
+    padding: 8px 12px;
+    background-color: #04AA6D;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
-.addboldP {
-    font-weight: bold;
+.buttonPrev {
+    padding: 8px 12px;
+    background-color: #f1f1f1;
+    color: black;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .collapsible {

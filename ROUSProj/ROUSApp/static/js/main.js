@@ -97,12 +97,12 @@ document.addEventListener('DOMContentLoaded', function () {
               var engineHours = document.getElementById('engineHoursInput').value;
               var flightHours = document.getElementById('flightHoursInput').value;
 
-
-              // the others values
+              // Tail Number values
               var currPlaneSN = document.getElementById('currentplaneSN').value;
               var planeMDS = document.getElementById('currentMDS').value;
               var planeTailNum = document.getElementById('currentTail').value;
-              //parts values
+
+              // Parts values
               var partPlaneSN = document.getElementById('partPlaneSNInput').value;
               var partMDS = document.getElementById('partMDSInput').value;
               var equipmentID = document.getElementById('equipmentIDInput').value;
@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
               var partJustification = document.getElementById('partJustificationInput').value;
               var partTimeFrame = document.getElementById('partTimeFrameInput').value;
               var partEngineFlight = document.getElementById('partEngineFlightInput').value;
+
               // plane maintenance data
               var planeSN = document.getElementById('planeSNInput').value;
               var mds = document.getElementById('mdsInput').value;
@@ -138,101 +139,58 @@ document.addEventListener('DOMContentLoaded', function () {
               // grabs tailnumber data
               const dropdown = document.getElementById('eventDropdown');
               const selectedOption = dropdown.options[dropdown.selectedIndex];
-              console.log(document.getElementById('eventDropdown').value);
+              const checkboxTail = document.getElementById('customInputCheckbox');
+              console.log(selectedOption.textContent);
 
-              // grabs the id for input section.
-              const planeContent = document.getElementById('planeContent');
-              const partContent = document.getElementById('partContent');
+              // check if is select from radio button plane or part.
+              const selectedPlane = document.getElementById('plane');
+              const selectedPart = document.getElementById('part');
 
-              // check if is open for plane or part content
-              const isOpenPlane = planeContent.style.display === 'block';
-              const isOpenPart = partContent.style.display === 'block';
+              // Function to check if an input field is empty
+              function isFieldEmpty(value) {
+                return value.trim() === '';
+              }
 
-
+              // Validate basic inputs
               const basicInputIds = ['titleInput', 'startInput', 'endInput', 'julianInput', 'engineHoursInput', 'flightHoursInput', 'eventDropdown'];
-              const planeInputIds = ['currentplaneSN', 'currentMDS', 'currentTail'];
-              const partsInputIds = ['partPlaneSNInput', 'partMDSInput', 'equipmentIDInput', 'partSerialNumberInput', 'partNumberInput', 'partNarrativeInput', 'wucLcnInput', 'partCurrentTimeInput', 'partTimeRemainingInput', 'partDueTimeInput', 'partFrequencyInput', 'partTypeInput', 'partJustificationInput', 'partTimeFrameInput', 'partEngineFlightInput'];
-              const maintInputIds = ['planeSNInput', 'mdsInput', 'narrativeInput', 'currentTimeInput', 'timeRemainingInput', 'dueTimeInput', 'frequencyInput', 'typeInput', 'justificationInput', 'timeFrameInput', 'engineFlightInput'];
-              let isAnyInputEmpty = false;
+              let isAnyInputEmpty = basicInputIds.some(id => isFieldEmpty(document.getElementById(id).value));
 
-              if (selectedOption.value === "other") {
-                if (isOpenPart) {
-                  const completeID = [...basicInputIds, ...planeInputIds, ...partsInputIds];
-                  console.log(completeID);
-                  for (const id of completeID) {
-                    const input = document.getElementById(id);
-                    const value = input.value.trim();
-                    if (value === "") {
-                      // If the input is empty, add the red border
-                      input.style.borderColor = "red";
-                      isAnyInputEmpty = true;
-                    } else {
-                      // If the input is not empty, remove the red border
-                      input.style.borderColor = ""; // This will reset the border color to the default or remove it completely
-                    }
-                  }
-                }
-                else {
-                  const completeID = [...basicInputIds, ...planeInputIds, ...maintInputIds];
-                  console.log(completeID);
-                  for (const id of completeID) {
-                    const input = document.getElementById(id);
-                    const value = input.value.trim();
-                    if (value === "") {
-                      // If the input is empty, add the red border
-                      input.style.borderColor = "red";
-                      isAnyInputEmpty = true;
-                    } else {
-                      // If the input is not empty, remove the red border
-                      input.style.borderColor = ""; // This will reset the border color to the default or remove it completely
-                    }
-                  }
-                }
-              }
-              else {
-                if (isOpenPart) {
-                  const completeID = [...basicInputIds, ...partsInputIds];
-                  console.log(completeID);
-                  for (const id of completeID) {
-                    const input = document.getElementById(id);
-                    const value = input.value.trim();
-                    if (value === "") {
-                      // If the input is empty, add the red border
-                      input.style.borderColor = "red";
-                      isAnyInputEmpty = true;
-                    } else {
-                      // If the input is not empty, remove the red border
-                      input.style.borderColor = ""; // This will reset the border color to the default or remove it completely
-                    }
-                  }
-                }
-                else {
-                  const completeID = [...basicInputIds, ...maintInputIds];
-                  console.log(completeID);
-                  for (const id of completeID) {
-                    const input = document.getElementById(id);
-                    const value = input.value.trim();
-                    if (value === "") {
-                      // If the input is empty, add the red border
-                      input.style.borderColor = "red";
-                      isAnyInputEmpty = true;
-                    } else {
-                      // If the input is not empty, remove the red border
-                      input.style.borderColor = ""; // This will reset the border color to the default or remove it completely
-                    }
-                  }
-                }
+
+              // Conditional validation for Plane
+              if (selectedPlane.checked) {
+                const planeInputIds = ['planeSNInput', 'mdsInput', 'narrativeInput', 'currentTimeInput', 'timeRemainingInput', 'dueTimeInput', 'frequencyInput', 'typeInput', 'justificationInput', 'timeFrameInput', 'engineFlightInput'];
+                isAnyInputEmpty = isAnyInputEmpty || planeInputIds.some(id => isFieldEmpty(document.getElementById(id).value));
               }
 
+
+              // Conditional validation for Part
+              if (selectedPart.checked) {
+                const partsInputIds = ['partPlaneSNInput', 'partMDSInput', 'equipmentIDInput', 'partSerialNumberInput', 'partNumberInput', 'partNarrativeInput', 'wucLcnInput', 'partCurrentTimeInput', 'partTimeRemainingInput', 'partDueTimeInput', 'partFrequencyInput', 'partTypeInput', 'partJustificationInput', 'partTimeFrameInput', 'partEngineFlightInput'];
+                isAnyInputEmpty = isAnyInputEmpty || partsInputIds.some(id => isFieldEmpty(document.getElementById(id).value));
+              }
+
+
+              // Conditional validation for manual input
+              if (checkboxTail.checked) {
+                // Example: custom input fields
+                var customTailNumber = ['currentplaneSN', 'currentMDS', 'currentTail'];
+                isAnyInputEmpty = isAnyInputEmpty || customTailNumber.some(id => isFieldEmpty(document.getElementById(id).value));
+              }
+
+              // Validate dropdown if checkboxTail is not checked
+              if (!checkboxTail.checked && (selectedOption.value === "" || selectedOption.value === "Choose here")) {
+                isAnyInputEmpty = true;
+              }
+
+              // Handle empty input case
               if (isAnyInputEmpty) {
                 Swal.fire({
                   icon: 'error',
                   title: 'Error',
                   text: "One or many of the input fields was left blank.",
                 });
-              }
-              else {
-
+              } else {
+                // Proceed with form submission
                 // Use Swal to confirm before submitting
                 Swal.fire({
                   title: "Uploading Data!",
@@ -243,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function () {
                   cancelButtonText: "Cancel"
                 }).then((result) => {
                   if (result.isConfirmed) {
-                    if (selectedOption.value === "other") {
+                    if (checkboxTail.checked) {
 
                       fetch(baseUrl + 'plane-data/', {
                         method: 'POST',
@@ -291,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
                           const resourceId = data.resourceId;
 
                           // the other methods for parts and calendar data
-                          if (isOpenPart) {
+                          if (selectedPart.checked) {
 
                             // First POST request
                             fetch(baseUrl + 'part-maintenance/', {
@@ -430,7 +388,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                       // the other methods for parts and calendar data
-                      if (isOpenPart) {
+                      if (selectedPart.checked) {
                         // First POST request
                         fetch(baseUrl + 'part-maintenance/', {
                           method: 'POST',
@@ -562,13 +520,10 @@ document.addEventListener('DOMContentLoaded', function () {
                       }
 
                     }
-
                   }
                 });
               }
-
             }
-
           }
         }
       },
@@ -1443,13 +1398,57 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-function toggleOtherInputLabel() {
-  var dropdown = document.getElementById("eventDropdown");
-  var otherInputLabel = document.getElementById("otherInputLabel");
 
-  if (dropdown.value === "other") {
-    otherInputLabel.classList.remove("hidden");
-  } else {
-    otherInputLabel.classList.add("hidden");
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  var dropdown = document.getElementById("eventDropdown");
+  const customInputCheckbox = document.getElementById('customInputCheckbox');
+  const customInputContainer = document.getElementById('customInputContainer');
+  const customInput1 = document.getElementById('currentplaneSN');
+  const customInput2 = document.getElementById('currentMDS');
+  const customInput3 = document.getElementById('currentTail');
+
+  customInputCheckbox.addEventListener('change', () => {
+    if (customInputCheckbox.checked) {
+      dropdown.disabled = true;
+      customInputContainer.classList.remove('hidden');
+    } else {
+      dropdown.disabled = false;
+      customInputContainer.classList.add('hidden');
+      customInput1.value = ''; // Clear the input field when unchecked
+      customInput2.value = ''; // Clear the input field when unchecked
+      customInput3.value = ''; // Clear the input field when unchecked
+    }
+  });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const planeRadio = document.getElementById('plane');
+  const partRadio = document.getElementById('part');
+  const planeInputContainer = document.getElementById('planeInputContainer');
+  const partInputContainer = document.getElementById('partInputContainer');
+
+  planeRadio.addEventListener('change', () => {
+    if (planeRadio.checked) {
+      planeInputContainer.classList.remove('hidden');
+      partInputContainer.classList.add('hidden');
+    }
+  });
+
+  partRadio.addEventListener('change', () => {
+    if (partRadio.checked) {
+      partInputContainer.classList.remove('hidden');
+      planeInputContainer.classList.add('hidden');
+    }
+  });
+});
+
+function nextStep(step) {
+  document.querySelectorAll('.step').forEach(stepDiv => stepDiv.classList.add('hidden'));
+  document.getElementById('step' + step).classList.remove('hidden');
 }
+
+function prevStep(step) {
+  document.querySelectorAll('.step').forEach(stepDiv => stepDiv.classList.add('hidden'));
+  document.getElementById('step' + step).classList.remove('hidden');
+}
+

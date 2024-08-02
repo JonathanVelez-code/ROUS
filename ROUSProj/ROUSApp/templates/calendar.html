@@ -2,224 +2,425 @@
 <html lang="en">
 
 <head>
-    <title>ROUS Calendar</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Favicon -->
-    {% load static %}
-    <link rel="icon" type="image/png" sizes="32x32" href="ROUSApp/static/images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="ROUSApp/static/images/favicon-16x16.png">
-    <link rel="mask-icon" href="ROUSApp/static/images/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css">
-    <!-- CSS File -->
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="ROUSApp/static/css/style.css">
-    <link rel="stylesheet" type="text/css" href="ROUSApp/static/css/select.css">
-    <!-- Full Calendar  -->
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.8/index.global.min.js'></script>
-    <!-- Sweet Alert  -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.all.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.min.css" rel="stylesheet">
-    <!-- Tippy  -->
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="https://unpkg.com/tippy.js@6"></script>
-    <!-- JavaScript File -->
-    <script src="ROUSApp/static/js/main.js"></script>
+        <title>ROUS Calendar</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Favicon -->
+        {% load static %}
+        <link rel="icon" type="image/png" sizes="32x32" href="ROUSApp/static/images/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="ROUSApp/static/images/favicon-16x16.png">
+        <link rel="mask-icon" href="ROUSApp/static/images/safari-pinned-tab.svg" color="#5bbad5">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="theme-color" content="#ffffff">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css">
+        <!-- CSS File -->
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="ROUSApp/static/css/style.css">
+        <link rel="stylesheet" type="text/css" href="ROUSApp/static/css/select.css">
+        <!-- Full Calendar  -->
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.8/index.global.min.js'></script>
+        <!-- Sweet Alert  -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.all.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.min.css" rel="stylesheet">
+        <!-- Tippy  -->
+        <script src="https://unpkg.com/@popperjs/core@2"></script>
+        <script src="https://unpkg.com/tippy.js@6"></script>
+        <!-- JavaScript File -->
+        <script src="ROUSApp/static/js/main.js"></script>
 
-    <script>
-        // Define the successCallback and failureCallback functions
-        function successCallback() {
-            console.log('Data update successful.');
-            // You can add any other logic or actions you want to perform on success.
-        }
+        <script>
+                // Define the successCallback and failureCallback functions
+                function successCallback() {
+                        console.log('Data update successful.');
+                        // You can add any other logic or actions you want to perform on success.
+                }
 
-        function failureCallback(error) {
-            console.error('Data update failed:', error);
-            // You can add any other logic or actions you want to perform on failure.
-        }
+                function failureCallback(error) {
+                        console.error('Data update failed:', error);
+                        // You can add any other logic or actions you want to perform on failure.
+                }
 
-        // Get the 'geoloc' parameter from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const TheGeoLoc = urlParams.get('geoloc');
+                // Get the 'geoloc' parameter from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const TheGeoLoc = urlParams.get('geoloc');
 
-        // Call the updateData function with the appropriate arguments
-        updateData(successCallback, failureCallback, TheGeoLoc);
-    </script>
+                // Call the updateData function with the appropriate arguments
+                updateData(successCallback, failureCallback, TheGeoLoc);
+        </script>
 
 </head>
 
 <body>
-    <header class="header">
-        <div class="logostyle">{% load static %}<img src="ROUSApp/static/images/TesseractLogo.ico" alt="Logo">
-            <span>TESSERACT</span>
-        </div>
-
-
-        <nav class="nav-links">
-            <a href="/">Home</a>
-            <a onclick="passgeoloc('calendar.html')" class="current">Calendar</a>
-            <a onclick="passgeoloc('fileupload.html')">Import</a>
-            <a onclick="passgeoloc('ScheduleHelper.html')">Scheduler</a>
-        </nav>
-    </header>
-
-    <div id="loading-screen">
-        Loading...
-    </div>
-
-    <div id="outer-wrapper">
-        <div id="calendar-wrapper">
-            <div id="calendar"></div>
-        </div>
-    </div>
-
-    <!-- creates a new event -->
-    <div class="modal-fade" id="createModal">
-        <div class="modal-struct">
-            <h3>Add Event</h3>
-            <P><span class="red-asterisk">* Required</span></P>
-            <p><span class="red-asterisk">*</span> Title: <input type="text" id="titleInput" placeholder="Title"></p>
-            <p><span class="red-asterisk">*</span> Start: <input type="date" id="startInput" placeholder="Start Date">
-            </p>
-            <p><span class="red-asterisk">*</span> End: <input type="date" id="endInput" placeholder="Event End"></p>
-            <p><span class="red-asterisk">*</span> Julian Date: <input type="text" id="julianInput"
-                    placeholder="Julian Date"></p>
-            <p><span class="red-asterisk">*</span> Engine Hours: <input type="text" id="engineHoursInput"
-                    placeholder="Engine Hours"></p>
-            <p><span class="red-asterisk">*</span> Flight Hours: <input type="text" id="flightHoursInput"
-                    placeholder="Flight Hours"></p>
-
-            <p class="addboldP">Select 'Other' if Tail Number Not found.</p>
-            <p><span class="red-asterisk">*</span> Tail Number:
-
-                <select id="eventDropdown" name="eventType" onchange="toggleOtherInputLabel()" required>
-                    <option value="" selected disabled hidden>Choose here</option>
-                    <option value="other">Other</option>
-                </select>
-
-            </p>
-
-            <div id="otherInputLabel" class="hidden">
-                <h3>Plane Data</h3>
-                <p><span class="red-asterisk">*</span> Plane Serial Number: <input type="text" id="currentplaneSN"
-                        placeholder="planeSN"></p>
-                <p><span class="red-asterisk">*</span> MDS: <input type="text" id="currentMDS" placeholder="MDS"></p>
-                <p><span class="red-asterisk">*</span> Tail Number: <input type="text" id="currentTail"
-                        placeholder="Tail Number"></p>
-            </div>
-
-            <p class="addboldP">Only select one a Plane or Part Maintenance.</p>
-            <p>
-                <button id="planeButton" class="collapsible"><span class="red-asterisk">*</span> Plane
-                    Maintenance</button>
-            </p>
-            <div id="planeContent" class="contentCollapse">
-                <h3>Plane Maintenance</h3>
-                <p><span class="red-asterisk">*</span> Plane Serial Number: <input type="text" id="planeSNInput"
-                        placeholder="planeSN"></p>
-                <p><span class="red-asterisk">*</span> MDS: <input type="text" id="mdsInput" placeholder="MDS"></p>
-                <p><span class="red-asterisk">*</span> Narrative:
-                </p>
-                <textarea type="text" id="narrativeInput" placeholder="Narrative" rows="5" cols="55"></textarea>
-                <p><span class="red-asterisk">*</span> Current Time: <input type="text" id="currentTimeInput"
-                        placeholder="Current Time"></p>
-                <p><span class="red-asterisk">*</span> Time Remaining: <input type="text" id="timeRemainingInput"
-                        placeholder="Time Remaining"></p>
-                <p><span class="red-asterisk">*</span> Due Time: <input type="text" id="dueTimeInput"
-                        placeholder="Due Time"></p>
-                <p><span class="red-asterisk">*</span> Frequency: <input type="text" id="frequencyInput"
-                        placeholder="Frequency"></p>
-                <p><span class="red-asterisk">*</span> Type: <input type="text" id="typeInput" placeholder="Type"></p>
-                <p><span class="red-asterisk">*</span> Justification: <input type="text" id="justificationInput"
-                        placeholder="Justification"></p>
-                <p><span class="red-asterisk">*</span> Time Frame: <input type="text" id="timeFrameInput"
-                        placeholder="Time Frame"></p>
-                <p><span class="red-asterisk">*</span> Engine or Flight: <input type="text" id="engineFlightInput"
-                        placeholder="Engine or Flight"></p>
-
-            </div>
-            <p>
-                <button id="partButton" class="collapsible"><span class="red-asterisk">*</span> Part
-                    Maintenance</button>
-            </p>
-            <div id="partContent" class="contentCollapse">
-                <h3>Part Maintenance</h3>
-                <p><span class="red-asterisk">*</span> Plane Serial Number: <input type="text" id="partPlaneSNInput"
-                        placeholder="planeSN"></p>
-                <p><span class="red-asterisk">*</span> MDS: <input type="text" id="partMDSInput" placeholder="MDS"></p>
-                <p><span class="red-asterisk">*</span> Equipment ID: <input type="text" id="equipmentIDInput"
-                        placeholder="Equipment ID"></p>
-                <p><span class="red-asterisk">*</span> Part Serial Number: <input type="text" id="partSerialNumberInput"
-                        placeholder="Part Serial Number">
-                </p>
-                <p><span class="red-asterisk">*</span> Part Number: <input type="text" id="partNumberInput"
-                        placeholder="Part Serial Number"></p>
-                <p><span class="red-asterisk">*</span> Narrative: </p>
-                <textarea type="text" id="partNarrativeInput" placeholder="Narrative" rows="5" cols="55"></textarea>
-                <p><span class="red-asterisk">*</span> Work Unit Code/ Logistics Control Number: <input type="text"
-                        id="wucLcnInput" placeholder="WUC LCN">
-                </p>
-                <p><span class="red-asterisk">*</span> Cat Number: <input type="text" id="catNumberInput"
-                        placeholder="Cat Number"></p>
-                <p><span class="red-asterisk">*</span> Current Time: <input type="text" id="partCurrentTimeInput"
-                        placeholder="Current Time"></p>
-                <p><span class="red-asterisk">*</span> Time Remaining: <input type="text" id="partTimeRemainingInput"
-                        placeholder="Time Remaining"></p>
-                <p><span class="red-asterisk">*</span> Due Time: <input type="text" id="partDueTimeInput"
-                        placeholder="Due Time"></p>
-                <p><span class="red-asterisk">*</span> Frequency: <input type="text" id="partFrequencyInput"
-                        placeholder="Frequency"></p>
-                <p><span class="red-asterisk">*</span> Type: <input type="text" id="partTypeInput" placeholder="Type">
-                </p>
-                <p><span class="red-asterisk">*</span> Justification: <input type="text" id="partJustificationInput"
-                        placeholder="Justification"></p>
-                <p><span class="red-asterisk">*</span> Time Frame: <input type="text" id="partTimeFrameInput"
-                        placeholder="Time Frame"></p>
-                <p><span class="red-asterisk">*</span> Engine or Flight: <input type="text" id="partEngineFlightInput"
-                        placeholder="Engine or Flight"></p>
-            </div>
-            <button class="buttonSaveCal" id="buttonSaveC">Save</button>
-            <button class="buttonCancle" id="cancelout">Cancel</button>
-        </div>
-    </div>
-
-    <!-- display event and edits -->
-    <div id="eventModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3 id="eventTitle"></h3>
-            <p id="eventStart"></p>
-            <p id="eventEnd"></p>
-            <p id="eventMaintenance"></p>
-            <button class="buttonSaveCal" id="editButton">Edit</button>
-            <div id="editForm" style="display: none;">
-                <div>
-                    <p>Title: <input type="text" id="eventTitleInput" placeholder="Event Title"></p>
+        <header class="header">
+                <div class="logostyle">{% load static %}<img src="ROUSApp/static/images/TesseractLogo.ico" alt="Logo">
+                        <span>TESSERACT</span>
                 </div>
-                <div>
-                    <p>Start: <input type="date" id="eventStartInput" placeholder="Event Start"> </p>
-                </div>
-                <div>
-                    <p>End: <input type="date" id="eventEndInput" placeholder="Event End"></p>
-                </div>
-                <div id="eventMaintenanceInput"></div>
-                <button class="buttonSaveCal" id="saveButton">Save</button>
-                <button class="buttonCancle" id="cancelButton">Cancel</button>
-            </div>
+
+
+                <nav class="nav-links">
+                        <a href="/">Home</a>
+                        <a onclick="passgeoloc('calendar.html')" class="current">Calendar</a>
+                        <a onclick="passgeoloc('fileupload.html')">Import</a>
+                        <a onclick="passgeoloc('ScheduleHelper.html')">Scheduler</a>
+                </nav>
+        </header>
+
+        <div id="loading-screen">
+                Loading...
         </div>
-    </div>
 
-    <footer class="footer">
-        {% load static %}<img src="ROUSApp/static/images/AirForceLogoBlack.png" alt="Air Force Logo">
+        <div id="outer-wrapper">
+                <div id="calendar-wrapper">
+                        <div id="calendar"></div>
+                </div>
+        </div>
 
-    </footer>
-    <!-- Bootstrap JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- creates a new event -->
+        <div class="display scrollable-section" id="createModal">
+                <div class="modal-fade ">
+                        <div class="modal-struct">
+                                <div class="layout">
+                                        <div class="center-align">
+                                                <h3>Add Event</h3>
+                                        </div>
+                                        <br>
+                                        <!-- calender section -->
+                                        <div class="step" id="step1">
+                                                <label><b>Calendar Information</b></label>
+                                                <p class="required-b required-text">required fields</p>
+                                                <div class="expand-label organize">
+                                                        <!-- Title input -->
+                                                        <div class="colmflex">
+                                                                <label class="required-b">Title:</label>
+                                                                <input type="text" id="titleInput" placeholder="Title">
+                                                        </div>
+
+                                                        <!-- Start Date input -->
+                                                        <div class="colmflex">
+                                                                <label class="required-b">Start Date:</label>
+                                                                <input type="date" id="startInput"
+                                                                        placeholder="Start Date">
+                                                        </div>
+                                                        <!-- End Date input -->
+                                                        <div class="colmflex">
+                                                                <label class="required-b">End Date:</label>
+                                                                <input type="date" id="endInput"
+                                                                        placeholder="Event End">
+                                                        </div>
+
+                                                        <!-- Julian Date input -->
+                                                        <div class="colmflex">
+                                                                <label class="required-b">Julian Date:</label>
+                                                                <input type="text" id="julianInput"
+                                                                        placeholder="Julian Date">
+                                                        </div>
+                                                        <!-- Engine Hours input -->
+                                                        <div class="colmflex">
+                                                                <label class="required-b">Engine Hours:</label>
+                                                                <input type="text" id="engineHoursInput"
+                                                                        placeholder="Engine Hours">
+                                                        </div>
+                                                        <!-- Flight Hours input -->
+                                                        <div class="colmflex">
+                                                                <label class="required-b">Flight Hours:</label>
+                                                                <input type="text" id="flightHoursInput"
+                                                                        placeholder="Flight Hours">
+                                                        </div>
+                                                </div>
+                                                <br>
+                                                <button class="buttonCancle" id="cancelout">Exit</button>
+                                                <button class="buttonNext" type="button"
+                                                        onclick="nextStep(2)">Next</button>
+                                        </div>
+
+                                        <!-- Tail Number input -->
+                                        <div class="step hidden" id="step2">
+                                                <label><b>Plane Information</b></label>
+                                                <p>Tail number not found click checkbox</p>
+                                                <div class="colmflex">
+                                                        <label for="eventDropdown" class="required-b">Tail
+                                                                Number:</label>
+                                                        <select id="eventDropdown" name="eventType" required>
+                                                                <option value="" selected disabled hidden>Choose here
+                                                                </option>
+                                                        </select>
+
+                                                        <label for="customInputCheckbox">Tail Number not found? <input
+                                                                        type="checkbox"
+                                                                        id="customInputCheckbox"></label>
+                                                </div>
+
+                                                <div id="customInputContainer" class="hidden">
+                                                        <div class="expand-label colmflex">
+                                                                <label class="required-b">Plane Serial Number:</label>
+                                                                <input type="text" id="currentplaneSN"
+                                                                        placeholder="planeSN">
+                                                                <label class="required-b">MDS:</label>
+                                                                <input type="text" id="currentMDS" placeholder="MDS">
+                                                                <label class="required-b">Tail Number:</label>
+                                                                <input type="text" id="currentTail"
+                                                                        placeholder="Tail Number">
+                                                        </div>
+                                                </div>
+                                                <br>
+                                                <button class="buttonPrev" type="button"
+                                                        onclick="prevStep(1)">Previous</button>
+                                                <button class="buttonNext" type="button"
+                                                        onclick="nextStep(3)">Next</button>
+                                        </div>
+
+                                        <!-- Plain or Part Maintenance input -->
+                                        <div class="step hidden" id="step3">
+                                                <div class="colmflex">
+                                                        <label><b>Maintenance Information</b></label>
+                                                        <label for="type">Select type:</label>
+
+                                                        <div>
+                                                                <input type="radio" id="plane" name="type"
+                                                                        value="plane">
+                                                                <label for="plane">Plane</label>
+                                                                <input type="radio" id="part" name="type" value="part">
+                                                                <label for="part">Part</label>
+                                                        </div>
+                                                </div>
+
+                                                <div id="planeInputContainer" class="hidden">
+                                                        <div class="expand-label organize">
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="planeSNInput">Plane
+                                                                                Serial
+                                                                                Number:</label>
+                                                                        <input type="text" id="planeSNInput"
+                                                                                placeholder="planeSN">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="mdsInput">MDS:</label>
+                                                                        <input type="text" id="mdsInput"
+                                                                                placeholder="MDS">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="currentTimeInput">Current
+                                                                                Time:</label>
+                                                                        <input type="text" id="currentTimeInput"
+                                                                                placeholder="Current Time">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="timeRemainingInput">Time
+                                                                                Remaining:</label>
+                                                                        <input type="text" id="timeRemainingInput"
+                                                                                placeholder="Time Remaining">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b" for="dueTimeInput">Due
+                                                                                Time:</label>
+                                                                        <input type="text" id="dueTimeInput"
+                                                                                placeholder="Due Time">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="frequencyInput">Frequency:</label>
+                                                                        <input type="text" id="frequencyInput"
+                                                                                placeholder="Frequency">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="typeInput">Type:</label>
+                                                                        <input type="text" id="typeInput"
+                                                                                placeholder="Type">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="justificationInput">Justification:</label>
+                                                                        <input type="text" id="justificationInput"
+                                                                                placeholder="Justification">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="timeFrameInput">Time
+                                                                                Frame:</label>
+                                                                        <input type="text" id="timeFrameInput"
+                                                                                placeholder="Time Frame">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="engineFlightInput">Engine
+                                                                                or Flight:</label>
+                                                                        <input type="text" id="engineFlightInput"
+                                                                                placeholder="Engine or Flight">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="narrativeInput">Narrative:</label>
+                                                                        <textarea type="text" id="narrativeInput"
+                                                                                placeholder="Narrative" rows="4"
+                                                                                cols="30"></textarea>
+                                                                </div>
+                                                        </div>
+                                                </div>
+
+                                                <div id="partInputContainer" class="hidden">
+                                                        <div class="expand-label organize">
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="partPlaneSNInput">Plane
+                                                                                Serial Number:</label>
+                                                                        <input type="text" id="partPlaneSNInput"
+                                                                                placeholder="planeSN">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="partMDSInput">MDS:</label>
+                                                                        <input type="text" id="partMDSInput"
+                                                                                placeholder="MDS">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="equipmentIDInput">Equipment
+                                                                                ID:</label>
+                                                                        <input type="text" id="equipmentIDInput"
+                                                                                placeholder="Equipment ID">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="partSerialNumberInput">Part
+                                                                                Serial Number:</label>
+                                                                        <input type="text" id="partSerialNumberInput"
+                                                                                placeholder="Part Serial Number">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="partNumberInput">Part
+                                                                                Number:</label>
+                                                                        <input type="text" id="partNumberInput"
+                                                                                placeholder="Part Serial Number">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="partNarrativeInput">Narrative:</label>
+                                                                        <textarea type="text" id="partNarrativeInput"
+                                                                                placeholder="Narrative" rows="4"
+                                                                                cols="30"></textarea>
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="catNumberInput">Cat
+                                                                                Number:</label>
+                                                                        <input type="text" id="catNumberInput"
+                                                                                placeholder="Cat Number">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="partCurrentTimeInput">Current
+                                                                                Time:</label>
+                                                                        <input type="text" id="partCurrentTimeInput"
+                                                                                placeholder="Current Time">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="partTimeRemainingInput">Time
+                                                                                Remaining:</label>
+                                                                        <input type="text" id="partTimeRemainingInput"
+                                                                                placeholder="Time Remaining">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="partDueTimeInput">Due
+                                                                                Time:</label>
+                                                                        <input type="text" id="partDueTimeInput"
+                                                                                placeholder="Due Time">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="partFrequencyInput">Frequency:</label>
+                                                                        <input type="text" id="partFrequencyInput"
+                                                                                placeholder="Frequency">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="partTypeInput">Type:</label>
+                                                                        <input type="text" id="partTypeInput"
+                                                                                placeholder="Type">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="partJustificationInput">Justification:</label>
+                                                                        <input type="text" id="partJustificationInput"
+                                                                                placeholder="Justification">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="partTimeFrameInput">Time
+                                                                                Frame:</label>
+                                                                        <input type="text" id="partTimeFrameInput"
+                                                                                placeholder="Time Frame">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b"
+                                                                                for="partEngineFlightInput">Engine
+                                                                                or Flight:</label>
+                                                                        <input type="text" id="partEngineFlightInput"
+                                                                                placeholder="Engine or Flight">
+                                                                </div>
+                                                                <div class="colmflex">
+                                                                        <label class="required-b" for="wucLcnInput">Work
+                                                                                Unit Code/
+                                                                                Logistics Control
+                                                                                Number:</label>
+                                                                        <input type="text" id="wucLcnInput"
+                                                                                placeholder="WUC LCN">
+                                                                </div>
+
+                                                        </div>
+                                                </div>
+                                                <button class="buttonPrev" type="button"
+                                                        onclick="prevStep(2)">Previous</button>
+                                                <button class="buttonSaveCal" id="buttonSaveC">Save</button>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+
+        <!-- display event and edits -->
+        <div id="eventModal" class="modal">
+                <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h3 id="eventTitle"></h3>
+                        <p id="eventStart"></p>
+                        <p id="eventEnd"></p>
+                        <p id="eventMaintenance"></p>
+                        <button class="buttonSaveCal" id="editButton">Edit</button>
+                        <div id="editForm" style="display: none;">
+                                <div>
+                                        <p>Title: <input type="text" id="eventTitleInput" placeholder="Event Title"></p>
+                                </div>
+                                <div>
+                                        <p>Start: <input type="date" id="eventStartInput" placeholder="Event Start">
+                                        </p>
+                                </div>
+                                <div>
+                                        <p>End: <input type="date" id="eventEndInput" placeholder="Event End"></p>
+                                </div>
+                                <div id="eventMaintenanceInput"></div>
+                                <button class="buttonSaveCal" id="saveButton">Save</button>
+                                <button class="buttonCancle" id="cancelButton">Cancel</button>
+                        </div>
+                </div>
+        </div>
+
+        <footer class="footer">
+                {% load static %}<img src="ROUSApp/static/images/AirForceLogoBlack.png" alt="Air Force Logo">
+
+        </footer>
+        <!-- Bootstrap JavaScript -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

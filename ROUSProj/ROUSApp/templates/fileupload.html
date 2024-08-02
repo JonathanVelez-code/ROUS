@@ -41,8 +41,57 @@
     </div>
 
     <div class="content">
+        <form class="dropzone-box">
+            <h2>Upload Excel file</h2>
+            <p>Click to upload or drag and drop</p>
+            <div class="dropzone-area">
+                <div class="file-upload-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-cloud-upload" width="24"
+                        height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#D4DCE6" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M7 18a4.6 4.4 0 0 1 0 -9a5 4.5 0 0 1 11 2h1a3.5 3.5 0 0 1 0 7h-1" />
+                        <path d="M9 15l3 -3l3 3" />
+                        <path d="M12 12l0 9" />
+                    </svg>
+                </div>
+                <label for="excel_file">
+                    <input type="file" id="excel_file" name="excel_file" accept=".xlsx, .xls">
+                </label>
+                <p class="file-info">No Files Selected</p>
+            </div>
+            <div class="dropzone-description">
+                <span>
+                    Supported formats: xlsx, xls, ...
+                </span>
+                <span>
+                    Max file size: 25MB
+                </span>
+            </div>
+            <div class="dropzone-actions">
+                <div class="dropzone-help">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-help">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                        <path d="M12 17l0 .01" />
+                        <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
+                    </svg>
+                    Help Center
+                </div>
+                <div class="action-buttons">
+                    <button type="reset">
+                        Cancel
+                    </button>
+                    <button id="import_button" type="submit" onclick="postExcel()">
+                        Import
+                    </button>
+                </div>
+            </div>
+        </form>
 
-
+        <!--
         <div class="message-container">
             <p class="message-text">Please only insert Excel documents</p>
             <div class="input-container">
@@ -54,10 +103,11 @@
                 <input class="inputbut" id="import_button" type="submit" value="Import" onclick="postExcel()">
             </div>
         </div>
-
+        -->
     </div>
 
     <script>
+        /*
         var fInput = document.getElementById("excel_file");
         var label = document.getElementById("file_label");
         var defaultLabel = "No File Selected";
@@ -68,6 +118,82 @@
         fInput.addEventListener("change", function () {
             var fileName = fInput.files[0].name;
             label.textContent = fileName;
+        });
+        */
+        const dropzoneBox = document.getElementsByClassName("dropzone-box")[0];
+        const inputFiles = document.querySelectorAll(
+            ".dropzone-area input[type='file']"
+        );
+        const inputElement = inputFiles[0];
+        const dropZoneElement = inputElement.closest(".dropzone-area");
+        const fileLimit = 25000000;
+
+
+        inputElement.addEventListener("change", (e) => {
+            if (inputElement.files[0].size > fileLimit) {
+                alert("File is over 25MB!");
+                return
+            }
+
+            if (inputElement.files.length) {
+                updateDropzoneFileList(dropZoneElement, inputElement.files[0]);
+            }
+        });
+
+        dropZoneElement.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZoneElement.classList.add("dropzone--over");
+        });
+
+        ["dragleave", "dragend"].forEach((type) => {
+            dropZoneElement.addEventListener(type, (e) => {
+                dropZoneElement.classList.remove("dropzone--over");
+            });
+        });
+
+        dropZoneElement.addEventListener("drop", (e) => {
+            e.preventDefault();
+
+            if (e.dataTransfer.files[0].size > fileLimit) {
+                alert("File is over 25MB!");
+                dropZoneElement.classList.remove("dropzone--over");
+
+                return
+            }
+
+            if (e.dataTransfer.files.length) {
+                inputElement.files = e.dataTransfer.files;
+
+                updateDropzoneFileList(dropZoneElement, e.dataTransfer.files[0]);
+            }
+
+            dropZoneElement.classList.remove("dropzone--over");
+        });
+
+        const updateDropzoneFileList = (dropzoneElement, file) => {
+            let dropzoneFileMessage = dropzoneElement.querySelector(".file-info");
+
+            dropzoneFileMessage.innerHTML = `
+        ${file.name}, ${file.size} bytes
+    `;
+        };
+
+        dropzoneBox.addEventListener("reset", (e) => {
+            let dropzoneFileMessage = dropZoneElement.querySelector(".file-info");
+
+            dropzoneFileMessage.innerHTML = `No Files Selected`;
+        });
+
+        dropzoneBox.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const myFiled = document.getElementById("upload-file");
+
+            if (myFiled.files[0].size > fileLimit) {
+                alert("File is over 25MB!");
+            }
+
+            console.log(myFiled.files[0]);
+
         });
     </script>
 
