@@ -1,5 +1,5 @@
 console.log('loaded');
-let base = 'http://127.0.0.1:8000/';
+let base = 'https://rousapp-a8a46816adf1.herokuapp.com/';
 
 // remove loading screen
 document.getElementById('loading-screen').style.display = 'none';

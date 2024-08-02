@@ -1,6 +1,6 @@
 //import { passgeoloc } from './main.js'
 
-let base = 'http://127.0.0.1:8000/';
+let base = 'https://rousapp-a8a46816adf1.herokuapp.com/';
 const urlParams = new URLSearchParams(window.location.search);
 const selectedGeoLoc = urlParams.get('geoloc');
 
