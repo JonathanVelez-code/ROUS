@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
               }
 
               // Validate dropdown if checkboxTail is not checked
-              if (!checkboxTail.checked && (selectedOption.value === "" || selectedOption.value === "Choose here")) {
+              if (!checkboxTail.checked && (selectedOption.textContent === "" || selectedOption.textContent === "Choose here")) {
                 isAnyInputEmpty = true;
               }
 
