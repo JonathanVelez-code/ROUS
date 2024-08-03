@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
               // Validate basic inputs
-              const basicInputIds = ['titleInput', 'startInput', 'endInput', 'julianInput', 'engineHoursInput', 'flightHoursInput', 'eventDropdown'];
+              const basicInputIds = ['titleInput', 'startInput', 'endInput', 'julianInput', 'engineHoursInput', 'flightHoursInput'];
               let isAnyInputEmpty = basicInputIds.some(id => isFieldEmpty(document.getElementById(id).value));
               console.log("check point 1:" + isAnyInputEmpty);
 
