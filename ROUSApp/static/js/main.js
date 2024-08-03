@@ -151,24 +151,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 return value.trim() === '';
               }
 
+
               // Validate basic inputs
               const basicInputIds = ['titleInput', 'startInput', 'endInput', 'julianInput', 'engineHoursInput', 'flightHoursInput', 'eventDropdown'];
               let isAnyInputEmpty = basicInputIds.some(id => isFieldEmpty(document.getElementById(id).value));
-
+              console.log("check point 1:" + isAnyInputEmpty);
 
               // Conditional validation for Plane
               if (selectedPlane.checked) {
                 const planeInputIds = ['planeSNInput', 'mdsInput', 'narrativeInput', 'currentTimeInput', 'timeRemainingInput', 'dueTimeInput', 'frequencyInput', 'typeInput', 'justificationInput', 'timeFrameInput', 'engineFlightInput'];
                 isAnyInputEmpty = isAnyInputEmpty || planeInputIds.some(id => isFieldEmpty(document.getElementById(id).value));
               }
-
+              console.log("check point 2:" + isAnyInputEmpty);
 
               // Conditional validation for Part
               if (selectedPart.checked) {
                 const partsInputIds = ['partPlaneSNInput', 'partMDSInput', 'equipmentIDInput', 'partSerialNumberInput', 'partNumberInput', 'partNarrativeInput', 'wucLcnInput', 'partCurrentTimeInput', 'partTimeRemainingInput', 'partDueTimeInput', 'partFrequencyInput', 'partTypeInput', 'partJustificationInput', 'partTimeFrameInput', 'partEngineFlightInput'];
                 isAnyInputEmpty = isAnyInputEmpty || partsInputIds.some(id => isFieldEmpty(document.getElementById(id).value));
               }
-
+              console.log("check point 3:" + isAnyInputEmpty);
 
               // Conditional validation for manual input
               if (checkboxTail.checked) {
@@ -176,11 +177,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 var customTailNumber = ['currentplaneSN', 'currentMDS', 'currentTail'];
                 isAnyInputEmpty = isAnyInputEmpty || customTailNumber.some(id => isFieldEmpty(document.getElementById(id).value));
               }
+              console.log("check point 4:" + isAnyInputEmpty);
 
               // Validate dropdown if checkboxTail is not checked
               if (!checkboxTail.checked && (selectedOption.textContent === "" || selectedOption.textContent === "Choose here")) {
                 isAnyInputEmpty = true;
               }
+              console.log("check point 5:" + isAnyInputEmpty);
 
               // Handle empty input case
               if (isAnyInputEmpty) {
