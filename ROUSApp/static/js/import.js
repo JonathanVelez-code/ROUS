@@ -1,8 +1,7 @@
-console.log('loaded');
 let base = 'https://rousapp-a8a46816adf1.herokuapp.com/';
 
 // remove loading screen
-document.getElementById('loading-screen').style.display = 'none';
+document.getElementById('loadingSpinner').classList.add('visually-hidden');
 
 // goes through excel sheet and converts data to objects
 async function importExcel() {
@@ -22,13 +21,13 @@ async function importExcel() {
 
 async function postExcel() {
   //put up loading screen while getting data
-  document.getElementById('loading-screen').style.display = 'flex';
+  document.getElementById('loadingSpinner').classList.remove('visually-hidden');
   try {
     const importObjects = await importExcel();
 
     // Make a get request for location and if it doesn't return anything, make the location with a post request
     let newGeoLoc = true;
-    const response = await fetch(base + 'loc/');
+    const response = await fetch(`loc/`);
     const data = await response.json();
 
     // Iterate over the data and see if GeoLoc already exists
@@ -41,10 +40,11 @@ async function postExcel() {
 
     // If GeoLoc doesn't exist, POST new GeoLoc
     if (newGeoLoc) {
-      await fetch(base + 'loc/', {
+      await fetch(`loc/`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-No-Redirect': 'true'
         },
         body: JSON.stringify({ GeoLoc: importObjects[0].GeoLoc })
       });
@@ -53,9 +53,9 @@ async function postExcel() {
     // Get Each Object that needs to be imported
     for (const obj of importObjects) {
       // Post Plane Data
-      const planeResponse = await fetch(base + 'plane-data/' + obj.PlaneSN + '/' + obj.MDS + '/');
+      const planeResponse = await fetch(`plane-data/${obj.PlaneSN}/${obj.MDS}/`);
       if (!planeResponse.ok) {
-        await fetch(base + 'plane-data/', {
+        await fetch(`plane-data/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -324,5 +324,5 @@ async function postExcel() {
     console.error('Error:', error);
   }
   // remove loading screen
-  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('loadingSpinner').classList.add('visually-hidden');
 }

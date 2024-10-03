@@ -21,6 +21,16 @@ class PartMaintenanceSerializer(serializers.ModelSerializer):
         model = PartMaintenance
         fields = '__all__'
 
+class DeployedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Deployed
+        fields = '__all__'
+
+class InventorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inventory
+        fields = '__all__'
+
 class PlaneDataSerializer(serializers.ModelSerializer):
     maintenances = serializers.SerializerMethodField()
     def get_maintenances(self, obj):

@@ -14,6 +14,13 @@
     margin-right: 10px;
 }
 
+.table-hover-cell td:hover {
+    background-color: #f0f0f0;
+    /* Change background color on hover */
+    cursor: pointer;
+    /* Change cursor to pointer */
+}
+
 .logostyle {
     font-family: 'ethnocentric', sans-serif;
     letter-spacing: .3rem;

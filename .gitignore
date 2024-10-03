@@ -9,3 +9,4 @@ ROUSProj/ROUSApp/__pycache__
 .gitignore
 ROUSApp/__pycache__/
 ROUSProj/__pycache__/
+.env

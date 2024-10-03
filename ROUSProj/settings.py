@@ -14,6 +14,11 @@ from pathlib import Path
 import os
 import django_heroku
 import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
+
+license_key = os.getenv('LICENSE_KEY')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,12 +28,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-emd))y2lt!3q^5zupnhbknc_a)zx6ct2s!8&cwy&=n@(#8isoh'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','rousapp-a8a46816adf1.herokuapp.com','127.0.0.1']
+ALLOWED_HOSTS = ['*','rousapp-a8a46816adf1.herokuapp.com','127.0.0.1:8000']
 
 
 # Application definition
@@ -42,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'ROUSApp',
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -52,6 +58,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'ROUSProj.urls'

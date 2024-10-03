@@ -19,10 +19,11 @@ register_converter(DateConverter, 'date')
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('location.html', views.location, name='location'),
-    path('calendar.html', views.calendar, name='calendar'),
-    path('fileupload.html', views.fileupload, name='fileupload'),
-    path('ScheduleHelper.html', views.ScheduleHelper, name='ScheduleHelper'),
+    path('location', views.location, name='location'),
+    path('calendar', views.calendar, name='calendar'),
+    path('fileupload', views.fileupload, name='fileupload'),
+    path('ScheduleHelper', views.ScheduleHelper, name='ScheduleHelper'),
+    path('inventory', views.inventory, name='inventory'),
 
     # get and post plane data list
     path("plane-data/", views.PlaneListView.as_view(), name='planes'),
@@ -36,6 +37,10 @@ urlpatterns = [
     path('loc/', views.LocationList.as_view(), name='location-list'),
     # get and post to resource list
     path('resource/', views.PostResourceView.as_view(), name='resource-list'),
+    # get and post to deployed list
+    path('deployed/', views.DeployedListView.as_view(), name='deployed-list'),
+    # get and post to deployed list
+    path('inventory/', views.InventoryListView.as_view(), name='inventory-list'),
 
 
     # allows get, patch and delete based on PlaneSN and MDS in plane data
@@ -46,6 +51,12 @@ urlpatterns = [
 
     # allows get and patch based on CalendarID in Calendar
     path("calendar/<str:pk1>/", views.IndividualDateCalendarEdit.as_view(), name='calendar date details'),
+
+    # allows get and patch based on CalendarID in Calendar
+    path("deployed/<str:pk1>/", views.IndividualDeployEdit.as_view(), name='deploy-patch'),
+
+    # allows get and patch based on InventoryID in inventory
+    path("inventory/<str:pk1>/", views.IndividualInventoryEdit.as_view(), name='inventory-patch'),
 
     # allows get and delete based on MDS and TailNumber str, in Calendar
     path("calendar/aircraft/<str:pk1>/<str:pk2>/", views.IndividualAircraftCalendar.as_view(), name='calendar-edit-details'),
@@ -76,6 +87,12 @@ urlpatterns = [
 
     # allows get based on GeoLoc in Calendar
     path('calendar/geoloc/<str:GeoLoc>/', views.CalendarListByGeoLoc.as_view(), name='calendar-list-by-geoloc'),
+    
+    # allows get based on GeoLoc in deployed
+    path('deployed/geoloc/<str:GeoLoc>/', views.DeployedListByGeoLoc.as_view(), name='deployed-list-by-geoloc'),
+
+    # allows get based on GeoLoc in inventory
+    path('inventory/geoloc/<str:GeoLoc>/', views.InventoryListByGeoLoc.as_view(), name='inventory-list-by-geoloc'),
 
     path('resource/geoloc/<str:GeoLoc>/', views.IndividualLocationResourceView.as_view(), name='resource-geo-tail'),
 

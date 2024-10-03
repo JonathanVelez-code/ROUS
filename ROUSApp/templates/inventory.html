@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}
+ROUS Inventory
+{% endblock %}
+
+{% block navbar %}
+<a class="nav-link fs-5" href="{% url 'home' %}">Home</a>
+<a class="nav-link fs-5" href="{% url 'calendar' %}?geoloc={{ geoloc }}">Calendar</a>
+<a class="nav-link fs-5 " href="{% url 'ScheduleHelper' %}?geoloc={{ geoloc }}">Scheduler</a>
+<a class="nav-link fs-5 active" href="{% url 'inventory' %}?geoloc={{ geoloc }}" class="current">Inventory</a>
+<a class="nav-link fs-5" href="{% url 'fileupload' %}?geoloc={{ geoloc }}">Import</a>
+{% endblock %}
+
+{% block before %}
+<div id="loadingSpinner" class="d-flex justify-content-center align-items-center visually-show loader visually-hidden">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+{% endblock %}
+
+{% block main %}
+<main class="fit-container min-vh-100 d-flex justify-content-center align-items-center">
+    <div class="table-wrapper d-flex overflow-auto outline"></div>
+    {% for item in inventory_data_list %}
+    <div class="table-container me-3" style="width: 700px;">
+        <table class="table table-bordered table-hover-cell">
+            <thead class="text-center">
+                <!-- Plane and Part Headers -->
+                <tr>
+                    <th scope="col" colspan="100%" class="table-success">Inventory</th>
+                </tr>
+            </thead>
+            <tbody>
+                <td data-PartNumber="{{ item.inventory.part_number }}" data-Name="{{ item.inventory.name }}"
+                    data-Quantity="{{ item.inventory.quantity }}" data-Location="{{ item.inventory.location }}"
+                    data-Supplier="{{ item.inventory.supplier }}" data-Id="{{ item.inventory.inventoryId }}"
+                    data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <strong>Name:</strong> {{ item.inventory.name }}<br>
+                    <strong>Part Number:</strong> {{ item.inventory.part_number }}<br>
+                    <strong>Quantity:</strong> {{ item.inventory.quantity }}<br>
+                    <strong>Location:</strong> {{ item.inventory.location }}<br>
+                    <strong>Supplier:</strong> {{ item.inventory.supplier }}<br>
+                    <strong>Last Updated:</strong> {{ item.inventory.last_updated }}<br>
+                </td>
+
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+    </div>
+</main>
+
+<!-- Modal Structure -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Update Inventory</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container mb-3">
+                    <i class="bi bi-info-circle required"> An asterisk indicates a required
+                        field</i>
+                </div>
+                <form id="myForm" class="add-needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="container">
+                        <div>
+                            <label for="name" class="form-label required">Name</label>
+                            <input type="text" class="form-control" aria-label="name" name="name" id="name" required>
+                        </div>
+                        <div>
+                            <label for="part_number" class="form-label required">Part Number</label>
+                            <input class="form-control" type="text" name="part_number" id="part_number" required>
+                        </div>
+                        <div>
+                            <label for="Quantity" class="form-label required">Quantity</label>
+                            <input class="form-control" type="number" name="quantity" aria-label="Quantity"
+                                id="Quantity" required>
+                        </div>
+                        <div>
+                            <label for="Location" class="form-label required">Location</label>
+                            <input type="text" class="form-control" aria-label="Location" name="location" id="Location"
+                                required>
+                        </div>
+                        <div>
+                            <label for="Supplier" class="form-label required">Supplier</label>
+                            <input type="text" class="form-control" aria-label="Supplier" name="supplier" id="Supplier"
+                                required>
+                        </div>
+                        <input type="hidden" name="GeoLoc" value="{{ geoloc }}">
+                        <input type="hidden" id="id">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="calSubmit">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% load static %}
+{% block scripts %}
+<script src="{% static 'js/inventory.js' %}"></script>
+{% endblock %}

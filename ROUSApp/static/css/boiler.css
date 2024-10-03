@@ -1,0 +1,86 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
+
+.fit-container {
+    height: 100vh;
+    margin: 0;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("https://media.defense.gov/2022/Feb/01/2002930997/2000/2000/0/200412-N-LH677-1032.PNG");
+    background-size: cover;
+    background-position: center;
+}
+
+.logostyle {
+    font-family: 'ethnocentric', sans-serif;
+    letter-spacing: .3rem;
+    font-size: 16px;
+    position: relative;
+    margin: 0;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.logostyle img {
+    margin-right: 5px;
+    pointer-events: none;
+}
+
+.logo-black {
+    width: 65px;
+    /* Adjust size as needed */
+    height: auto;
+    filter: brightness(0);
+    /* This works for SVGs */
+}
+
+.calendar-container {
+    height: 100vh;
+    margin: 0;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("https://media.defense.gov/2022/Feb/01/2002930997/2000/2000/0/200412-N-LH677-1032.PNG");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.calendar-wrapper {
+    background-color: #fafafa;
+    border-radius: 2%;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    width: 90%;
+    /* Adjust this value as needed */
+}
+
+.calendar {
+    width: 100%;
+}
+
+.loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.required:after {
+    content: " *";
+    color: red;
+}
+
+.table-hover-cell td:hover {
+    background-color: #f0f0f0;
+    /* Change background color on hover */
+    cursor: pointer;
+    /* Change cursor to pointer */
+}
+
+/* .outline {
+    background-color: white !important;
+} */

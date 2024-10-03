@@ -2,7 +2,7 @@
 from django.db import models
 
 class Location(models.Model):
-    GeoLoc = models.CharField(primary_key=True, max_length=10)
+    GeoLoc = models.CharField(primary_key=True, max_length=20)
 
 class Resource(models.Model):
     ResourceID = models.AutoField(primary_key=True)
@@ -38,12 +38,12 @@ class PartMaintenance(models.Model):
     PartMaintenanceID = models.AutoField(primary_key=True)
     PlaneSN = models.CharField(max_length=10)
     MDS = models.CharField(max_length=10)
-    EQP_ID = models.CharField(max_length=10)
+    EQP_ID = models.CharField(max_length=15)
     PartSN = models.CharField(max_length=10)
     PartNum = models.CharField(max_length=10)
     Narrative = models.TextField(default="", blank=True)
     WUC_LCN = models.CharField(max_length=14)
-    CatNum = models.SmallIntegerField(default=0)
+    CatNum = models.BigIntegerField(default=0)
     CrntTime = models.FloatField(default=0.0)
     TimeRemain = models.FloatField(default=0.0)
     DueTime = models.FloatField(default=0.0)
@@ -88,3 +88,25 @@ class Calendar(models.Model):
     PartMaintenanceID = models.IntegerField(default=0)
     ResourceID = models.IntegerField(default=0)
     Completed = models.BooleanField(default=False)
+
+# Air craft deployment model
+class Deployed(models.Model):
+    start = models.DateField()
+    end = models.DateField()
+    DeployedID = models.AutoField(primary_key=True)
+    JulianDate = models.IntegerField(default=0)
+    TailNumber = models.CharField(max_length=10)
+    title = models.TextField(blank=True)
+    GeoLoc = models.CharField(max_length=10)
+
+# Part inventory model
+class Inventory(models.Model):
+    inventoryId = models.AutoField(primary_key=True)
+    part_number = models.CharField(max_length=100)
+    name = models.CharField(max_length=200)
+    quantity = models.PositiveIntegerField()
+    location = models.CharField(max_length=100)
+    supplier = models.CharField(max_length=200)
+    date_added = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    GeoLoc = models.CharField(max_length=10)

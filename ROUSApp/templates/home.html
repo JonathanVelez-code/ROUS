@@ -1,5 +1,41 @@
 {% extends "base.html" %}
 
 {% block title %}
-ROUS Locations
+ROUS
+{% endblock %}
+
+{% block navbar %}
+<a class="nav-link fs-5" href="{% url 'location' %}">Add Location</a>
+{% endblock %}
+
+{% block before %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert" id="validation-alert" style="display: none;">
+    Please select a valid location!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endblock %}
+
+{% block main %}
+<main class="fit-container min-vh-100 d-flex justify-content-center align-items-center">
+    <form action="{% url 'calendar' %}" method="get" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="container d-flex justify-content-center align-items-center gap-3">
+            <div>
+                <select name="geoloc" class="form-select form-select-lg" id="location-select" required>
+                    <option selected disabled value="">Select Location</option>
+                    {% for location in locations %}
+                    <option value="{{ location.GeoLoc }}">{{ location.GeoLoc }}</option>
+                    <!-- Adjust based on your model fields -->
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-lg btn-primary" id="submit-btn">Enter</button>
+        </div>
+    </form>
+</main>
+{% endblock %}
+
+{% load static %}
+{% block scripts %}
+<script type="module" src="{% static 'js/validate.js' %}"></script>
 {% endblock %}

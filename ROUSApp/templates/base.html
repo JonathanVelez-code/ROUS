@@ -16,59 +16,78 @@
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css">
-    <!-- select2 -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Full Calendar  -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.8/index.global.min.js'></script>
+    <!-- Sweet Alert  -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.all.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.min.css" rel="stylesheet">
     <!-- CSS File -->
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="ROUSApp/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/boiler.css' %}">
     <!-- JavaScript File -->
-    <script src="ROUSApp/static/js/main.js"></script>
-
-    <script>
-        $(document).ready(function () {
-            $('.js-example-basic-single').select2({
-                placeholder: 'Locations',
-                width: 'resolve'
-
-            });
-        });
-    </script>
 
 </head>
 
-<body>
-
-    <header class="header">
-        <div class="logostyle">{% load static %}<img src="ROUSApp/static/images/TesseractLogo.ico" alt="Logo">
-            <span>TESSERACT</span>
+<body class="d-flex flex-column vh-100">
+    <nav class="navbar bg-dark navbar-expand-lg bg-body-tertiary sticky-top" data-bs-theme="light">
+        <div class="container-fluid">
+            <div>
+                <a class="navbar-brand logostyle" href="/">
+                    {% load static %}
+                    <img src="{% static 'images/TesseractLogo.ico' %}" alt="Logo" class="d-inline-block align-text-top">
+                    TESSERACT
+                </a>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav ms-auto">
+                    <!-- Other nav items -->
+                    {% block navbar %}
+                    {% endblock %}
+                </div>
+            </div>
         </div>
+    </nav>
 
-        <nav class="nav-links">
-            <a href="location.html">Add Location</a>
-        </nav>
-    </header>
+    {% block before %}
+    {% endblock %}
 
+    {% block main %}
+    {% endblock %}
 
-    <div class="content">
-        <div id="dropdownContainer">
-            <select class="js-example-basic-single" style="width: 200%" name="Locations" id="select">
+    {% block after %}
+    {% endblock %}
 
-            </select>
-        </div>
-        <div>
-            <button class="submitbut" id="submit-btn">Submit</button>
-        </div>
+    <div class="container">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <p class="col-md-4 mb-0 text-body-secondary">© 2023 Air Force</p>
+
+            <a href="/"
+                class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                <img src="{% static 'images/US_Air_Force_Logo.svg' %}" alt="Air Force Logo"
+                    class="img-fluid logo-black">
+            </a>
+
+            <ul class="nav col-md-4 justify-content-end">
+                <!-- <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Home</a></li>-->
+            </ul>
+        </footer>
     </div>
 
-    <footer class="footer">
-        {% load static %}<img src="ROUSApp/static/images/AirForceLogoBlack.png" alt="Air Force Logo">
-
-    </footer>
+    {% block scripts %}
+    {% endblock %}
 
     <!-- Bootstrap JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>

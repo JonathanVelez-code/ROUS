@@ -1,109 +1,172 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <title>Scheduling</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Favicon -->
-    {% load static %}
-    <link rel="icon" type="image/png" sizes="32x32" href="ROUSApp/static/images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="ROUSApp/static/images/favicon-16x16.png">
-    <link rel="mask-icon" href="ROUSApp/static/images/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css">
-    <!-- Sweet Alert  -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.all.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.min.css" rel="stylesheet">
-    <!-- CSS File -->
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="ROUSApp/static/css/style.css">
-    <!-- JavaScript File -->
-    <script src="ROUSApp/static/js/main.js"></script>
-    <script src="ROUSApp/static/js/ScheduleHelper.js"></script>
+{% block title %}
+ROUS Schedular
+{% endblock %}
 
-    <!--    <script>-->
-    <!--        $("body").on("click", ".maintenance-item", function() {-->
-    <!--            var maintenanceType = $(this).data("type");-->
-    <!--            var maintenanceID = $(this).data("maintenance");-->
-    <!--            createEvent(maintenanceType, maintenanceID);-->
-    <!--        })-->
-    <!--    </script>-->
-</head>
+{% block navbar %}
+<a class="nav-link fs-5" href="{% url 'home' %}">Home</a>
+<a class="nav-link fs-5" href="{% url 'calendar' %}?geoloc={{ geoloc }}">Calendar</a>
+<a class="nav-link fs-5 active" href="{% url 'ScheduleHelper' %}?geoloc={{ geoloc }}" class="current">Scheduler</a>
+<a class="nav-link fs-5" href="{% url 'inventory' %}?geoloc={{ geoloc }}">Inventory</a>
+<a class="nav-link fs-5" href="{% url 'fileupload' %}?geoloc={{ geoloc }}">Import</a>
+{% endblock %}
 
-<body>
-
-    <header class="header">
-        <div class="logostyle">{% load static %}<img src="ROUSApp/static/images/TesseractLogo.ico" alt="Logo">
-            <span>TESSERACT</span>
-        </div>
-        <nav class="nav-links">
-            <a href="/">Home</a>
-            <a onclick="passgeoloc('calendar.html')">Calendar</a>
-            <a onclick="passgeoloc('fileupload.html')">Import</a>
-            <a onclick="passgeoloc('ScheduleHelper.html')" class="current">Scheduler</a>
-        </nav>
-    </header>
-
-    <div id="loading-screen">
-        Loading...
+{% block before %}
+<div id="loadingSpinner" class="d-flex justify-content-center align-items-center visually-show loader visually-hidden">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
     </div>
+</div>
+{% endblock %}
 
-    <div class="boxcontent">
-        <div id="TableDiv1" class="container tbl-container">
-            <div id="TableDiv2" class="row tbl-fixed">
-                <table id="ScheduleTable" class="table-striped table-condensed">
-                    <thead id="TailNumberHead">
-                        <tr id="TailNumbers">
+{% block main %}
+<main class="fit-container min-vh-100 d-flex justify-content-center align-items-center">
+    <!-- First Table (Scheduler) -->
+    <div class="table-wrapper d-flex overflow-auto outline">
+        {% for item in resource_plane_data_list %}
+        {% if item.plane_data.maintenances %}
+        <!-- Each table wrapped inside a div for separate tables laid out in one line -->
+        <div class="table-container me-3" style="width: 700px;"> <!-- Add margin-right for spacing -->
+            <table class="table table-bordered table-hover-cell">
+                <thead class="text-center">
+                    <!-- TailNumber as a distinct section header -->
+                    <tr class="">
+                        <th scope="col" colspan="2" class="table-success">Tail Number: {{ item.resource.TailNumber }}
+                        </th>
+                    </tr>
+                    <!-- Plane and Part Headers -->
+                    <tr>
+                        <th scope="col" class="table-warning">Plane</th>
+                        <th scope="col" class="table-warning">Part</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for maintenance in item.plane_data.maintenances %}
+                        {% if maintenance.PlaneMaintenanceID %}
+                        <td data-tailnumber="{{ item.resource.TailNumber }}"
+                            data-resourceid="{{ item.resource.ResourceID }}" data-mds="{{ maintenance.MDS }}"
+                            data-planeMaintenanceID="{{ maintenance.PlaneMaintenanceID }}" data-partMaintenanceID="0"
+                            data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <strong>Tail Number:</strong> {{ item.resource.TailNumber }}<br>
+                            <strong>Current Time:</strong> {{ maintenance.CrntTime }}<br>
+                            <strong>Time Remaining:</strong> {{ maintenance.TimeRemain }}<br>
+                            <strong>Due Time:</strong> {{ maintenance.DueTime }}<br>
+                            <strong>Frequency:</strong> {{ maintenance.Freq }}<br>
+                            <strong>Type:</strong> {{ maintenance.Type }}<br>
+                            <strong>Justification:</strong> {{ maintenance.JST }}<br>
+                            <strong>Time Frame:</strong> {{ maintenance.TFrame }}<br>
+                            <strong>Engine(E)/Flight(F):</strong> {{ maintenance.E_F }}<br>
+                        </td>
+                        {% endif %}
 
-                        </tr>
-                        <tr id="Plane_Part">
+                        {% if maintenance.PartMaintenanceID %}
+                        <td data-tailnumber="{{ item.resource.TailNumber }}"
+                            data-resourceid="{{ item.resource.ResourceID }}" data-mds="{{ maintenance.MDS }}"
+                            data-planeMaintenanceID="0" data-partMaintenanceID="{{ maintenance.PartMaintenanceID }}"
+                            data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <strong>Tail Number:</strong> {{ item.resource.TailNumber }}<br>
+                            <strong>Current Time:</strong> {{ maintenance.CrntTime }}<br>
+                            <strong>Equipment ID:</strong> {{ maintenance.EQP_ID }}<br>
+                            <strong>Part Serial Number:</strong> {{ maintenance.PartSN }}<br>
+                            <strong>Part Number:</strong> {{ maintenance.PartNum }}<br>
+                            <strong>WUC/LCN:</strong> {{ maintenance.WUC_LCN }}<br>
+                            <strong>Time Remaining:</strong> {{ maintenance.TimeRemain }}<br>
+                            <strong>Due Time:</strong> {{ maintenance.DueTime }}<br>
+                            <strong>Frequency:</strong> {{ maintenance.Freq }}<br>
+                            <strong>Type:</strong> {{ maintenance.Type }}<br>
+                            <strong>Justification:</strong> {{ maintenance.JST }}<br>
+                            <strong>Time Frame:</strong> {{ maintenance.TFrame }}<br>
+                            <strong>Engine(E)/Flight(F):</strong> {{ maintenance.E_F }}<br>
+                        </td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</main>
 
-                        </tr>
-                    </thead>
-                    <tbody id="Maintenances">
-
-                    </tbody>
-                </table>
+<!-- Modal Structure -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add To Calendar</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container mb-3">
+                    <i class="bi bi-info-circle required"> An asterisk indicates a required
+                        field</i>
+                </div>
+                <form id="myForm" class="add-needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="container">
+                        <div>
+                            <label for="title" class="form-label required">Title</label>
+                            <input type="text" class="form-control" placeholder="A0039 Component Repair"
+                                aria-label="title" name="title" id="title" required>
+                        </div>
+                        <div>
+                            <label for="start" class="form-label required">Start
+                                Date</label>
+                            <input class="form-control" type="date" name="start" aria-label="" required>
+                        </div>
+                        <div>
+                            <label for="end" class="form-label required">End
+                                Date</label>
+                            <input class="form-control" type="date" name="end" aria-label="" required>
+                        </div>
+                        <div>
+                            <label for="" class="form-label required">Julian
+                                Date</label>
+                            <input type="text" class="form-control" placeholder="24267" aria-label="" name="JulianDate"
+                                required>
+                        </div>
+                        <div>
+                            <label for="" class="form-label required">Engine
+                                Hours</label>
+                            <input type="text" class="form-control" placeholder="2" aria-label="" name="EHours"
+                                required>
+                            <div class="form-text">
+                                Engine Hours are limited to ensure optimal
+                                condition for each aircraft.
+                            </div>
+                        </div>
+                        <div>
+                            <label for="" class="form-label required">Flight
+                                Hours</label>
+                            <input type="text" class="form-control" placeholder="3" aria-label="" name="FHours"
+                                required>
+                            <div class="form-text">
+                                Flight Hours are limited to ensure optimal
+                                condition for each aircraft.
+                            </div>
+                        </div>
+                        <input type="hidden" name="GeoLoc" value="{{ geoloc }}">
+                        <input type="hidden" id="tailNumberInput" name="TailNumber" value="">
+                        <input type="hidden" id="resourceIdInput" name="ResourceID" value="">
+                        <input type="hidden" id="mdsInput" name="MDS" value="">
+                        <input type="hidden" id="planMId" name="PlaneMaintenanceID" value="">
+                        <input type="hidden" id="partMId" name="PartMaintenanceID" value="">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="calSubmit">Submit</button>
             </div>
         </div>
     </div>
+</div>
+{% endblock %}
 
-    <div class="display" id="createModal">
-        <div class="modal-fade">
-            <div class="modal-struct">
-                <h3>Add Event</h3>
-                <P><span class="red-asterisk">* Required</span></P>
-                <p><span class="red-asterisk">*</span> Title: <input type="text" id="titleInput" placeholder="Title">
-                </p>
-                <p><span class="red-asterisk">*</span> Start: <input type="date" id="startInput"
-                        placeholder="Start Date">
-                </p>
-                <p><span class="red-asterisk">*</span> End: <input type="date" id="endInput" placeholder="Event End">
-                </p>
-                <p><span class="red-asterisk">*</span> Julian Date: <input type="text" id="julianInput"
-                        placeholder="Julian Date"></p>
-                <p><span class="red-asterisk">*</span> Engine Hours: <input type="text" id="engineHoursInput"
-                        placeholder="Engine Hours"></p>
-                <p><span class="red-asterisk">*</span> Flight Hours: <input type="text" id="flightHoursInput"
-                        placeholder="Flight Hours"></p>
-
-                <button class="buttonSaveCal" id="buttonSaveC">Save</button>
-                <button class="buttonCancle" id="cancelout">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <footer class="footer">
-        {% load static %}<img src="ROUSApp/static/images/AirForceLogoBlack.png" alt="Air Force Logo">
-
-    </footer>
-
-    <!-- Bootstrap JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+{% load static %}
+{% block scripts %}
+<script src="{% static 'js/scheduler.js' %}"></script>
+{% endblock %}

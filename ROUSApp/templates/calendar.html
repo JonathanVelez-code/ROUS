@@ -1,426 +1,612 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}
+ROUS Calendar
+{% endblock %}
 
-<head>
-        <title>ROUS Calendar</title>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- Favicon -->
-        {% load static %}
-        <link rel="icon" type="image/png" sizes="32x32" href="ROUSApp/static/images/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="ROUSApp/static/images/favicon-16x16.png">
-        <link rel="mask-icon" href="ROUSApp/static/images/safari-pinned-tab.svg" color="#5bbad5">
-        <meta name="msapplication-TileColor" content="#da532c">
-        <meta name="theme-color" content="#ffffff">
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css">
-        <!-- CSS File -->
-        {% load static %}
-        <link rel="stylesheet" type="text/css" href="ROUSApp/static/css/style.css">
-        <link rel="stylesheet" type="text/css" href="ROUSApp/static/css/select.css">
-        <!-- Full Calendar  -->
-        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
-        <script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.8/index.global.min.js'></script>
-        <!-- Sweet Alert  -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.all.min.js"></script>
-        <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.12/dist/sweetalert2.min.css" rel="stylesheet">
-        <!-- Tippy  -->
-        <script src="https://unpkg.com/@popperjs/core@2"></script>
-        <script src="https://unpkg.com/tippy.js@6"></script>
-        <!-- JavaScript File -->
-        <script src="ROUSApp/static/js/main.js"></script>
+{% block navbar %}
+<a class="nav-link fs-5" href="{% url 'home' %}">Home</a>
+<a class="nav-link fs-5 active" href="{% url 'calendar' %}?geoloc={{ geoloc }}" class="current">Calendar</a>
+<a class="nav-link fs-5" href="{% url 'ScheduleHelper' %}?geoloc={{ geoloc }}">Scheduler</a>
+<a class="nav-link fs-5" href="{% url 'inventory' %}?geoloc={{ geoloc }}">Inventory</a>
+<a class="nav-link fs-5" href="{% url 'fileupload' %}?geoloc={{ geoloc }}">Import</a>
+{% endblock %}
 
-        <script>
-                // Define the successCallback and failureCallback functions
-                function successCallback() {
-                        console.log('Data update successful.');
-                        // You can add any other logic or actions you want to perform on success.
-                }
-
-                function failureCallback(error) {
-                        console.error('Data update failed:', error);
-                        // You can add any other logic or actions you want to perform on failure.
-                }
-
-                // Get the 'geoloc' parameter from URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const TheGeoLoc = urlParams.get('geoloc');
-
-                // Call the updateData function with the appropriate arguments
-                updateData(successCallback, failureCallback, TheGeoLoc);
-        </script>
-
-</head>
-
-<body>
-        <header class="header">
-                <div class="logostyle">{% load static %}<img src="ROUSApp/static/images/TesseractLogo.ico" alt="Logo">
-                        <span>TESSERACT</span>
-                </div>
-
-
-                <nav class="nav-links">
-                        <a href="/">Home</a>
-                        <a onclick="passgeoloc('calendar.html')" class="current">Calendar</a>
-                        <a onclick="passgeoloc('fileupload.html')">Import</a>
-                        <a onclick="passgeoloc('ScheduleHelper.html')">Scheduler</a>
-                </nav>
-        </header>
-
-        <div id="loading-screen">
-                Loading...
+{% block before %}
+<div id="loadingSpinner" class="d-flex justify-content-center align-items-center visually-show loader">
+        <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
         </div>
+</div>
+{% endblock %}
 
-        <div id="outer-wrapper">
-                <div id="calendar-wrapper">
-                        <div id="calendar"></div>
-                </div>
+{% block main %}
+<main class="calendar-container">
+        <div class="calendar-wrapper">
+                <div id="calendar" class="calendar"></div>
         </div>
+</main>
+{% endblock %}
 
-        <!-- creates a new event -->
-        <div class="display scrollable-section" id="createModal">
-                <div class="modal-fade ">
-                        <div class="modal-struct">
-                                <div class="layout">
-                                        <div class="center-align">
-                                                <h3>Add Event</h3>
-                                        </div>
-                                        <br>
-                                        <!-- calender section -->
-                                        <div class="step" id="step1">
-                                                <label><b>Calendar Information</b></label>
-                                                <p class="required-b required-text">required fields</p>
-                                                <div class="expand-label organize">
-                                                        <!-- Title input -->
-                                                        <div class="colmflex">
-                                                                <label class="required-b">Title:</label>
-                                                                <input type="text" id="titleInput" placeholder="Title">
-                                                        </div>
-
-                                                        <!-- Start Date input -->
-                                                        <div class="colmflex">
-                                                                <label class="required-b">Start Date:</label>
-                                                                <input type="date" id="startInput"
-                                                                        placeholder="Start Date">
-                                                        </div>
-                                                        <!-- End Date input -->
-                                                        <div class="colmflex">
-                                                                <label class="required-b">End Date:</label>
-                                                                <input type="date" id="endInput"
-                                                                        placeholder="Event End">
-                                                        </div>
-
-                                                        <!-- Julian Date input -->
-                                                        <div class="colmflex">
-                                                                <label class="required-b">Julian Date:</label>
-                                                                <input type="text" id="julianInput"
-                                                                        placeholder="Julian Date">
-                                                        </div>
-                                                        <!-- Engine Hours input -->
-                                                        <div class="colmflex">
-                                                                <label class="required-b">Engine Hours:</label>
-                                                                <input type="text" id="engineHoursInput"
-                                                                        placeholder="Engine Hours">
-                                                        </div>
-                                                        <!-- Flight Hours input -->
-                                                        <div class="colmflex">
-                                                                <label class="required-b">Flight Hours:</label>
-                                                                <input type="text" id="flightHoursInput"
-                                                                        placeholder="Flight Hours">
-                                                        </div>
-                                                </div>
-                                                <br>
-                                                <button class="buttonCancle" id="cancelout">Exit</button>
-                                                <button class="buttonNext" type="button"
-                                                        onclick="nextStep(2)">Next</button>
-                                        </div>
-
-                                        <!-- Tail Number input -->
-                                        <div class="step hidden" id="step2">
-                                                <label><b>Plane Information</b></label>
-                                                <p>Tail number not found click checkbox</p>
-                                                <div class="colmflex">
-                                                        <label for="eventDropdown" class="required-b">Tail
-                                                                Number:</label>
-                                                        <select id="eventDropdown" name="eventType" required>
-                                                                <option value="" selected disabled hidden>Choose here
-                                                                </option>
-                                                        </select>
-
-                                                        <label for="customInputCheckbox">Tail Number not found? <input
-                                                                        type="checkbox"
-                                                                        id="customInputCheckbox"></label>
-                                                </div>
-
-                                                <div id="customInputContainer" class="hidden">
-                                                        <div class="expand-label colmflex">
-                                                                <label class="required-b">Plane Serial Number:</label>
-                                                                <input type="text" id="currentplaneSN"
-                                                                        placeholder="planeSN">
-                                                                <label class="required-b">MDS:</label>
-                                                                <input type="text" id="currentMDS" placeholder="MDS">
-                                                                <label class="required-b">Tail Number:</label>
-                                                                <input type="text" id="currentTail"
-                                                                        placeholder="Tail Number">
-                                                        </div>
-                                                </div>
-                                                <br>
-                                                <button class="buttonPrev" type="button"
-                                                        onclick="prevStep(1)">Previous</button>
-                                                <button class="buttonNext" type="button"
-                                                        onclick="nextStep(3)">Next</button>
-                                        </div>
-
-                                        <!-- Plain or Part Maintenance input -->
-                                        <div class="step hidden" id="step3">
-                                                <div class="colmflex">
-                                                        <label><b>Maintenance Information</b></label>
-                                                        <label for="type">Select type:</label>
-
-                                                        <div>
-                                                                <input type="radio" id="plane" name="type"
-                                                                        value="plane">
-                                                                <label for="plane">Plane</label>
-                                                                <input type="radio" id="part" name="type" value="part">
-                                                                <label for="part">Part</label>
-                                                        </div>
-                                                </div>
-
-                                                <div id="planeInputContainer" class="hidden">
-                                                        <div class="expand-label organize">
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="planeSNInput">Plane
-                                                                                Serial
-                                                                                Number:</label>
-                                                                        <input type="text" id="planeSNInput"
-                                                                                placeholder="planeSN">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="mdsInput">MDS:</label>
-                                                                        <input type="text" id="mdsInput"
-                                                                                placeholder="MDS">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="currentTimeInput">Current
-                                                                                Time:</label>
-                                                                        <input type="text" id="currentTimeInput"
-                                                                                placeholder="Current Time">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="timeRemainingInput">Time
-                                                                                Remaining:</label>
-                                                                        <input type="text" id="timeRemainingInput"
-                                                                                placeholder="Time Remaining">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b" for="dueTimeInput">Due
-                                                                                Time:</label>
-                                                                        <input type="text" id="dueTimeInput"
-                                                                                placeholder="Due Time">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="frequencyInput">Frequency:</label>
-                                                                        <input type="text" id="frequencyInput"
-                                                                                placeholder="Frequency">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="typeInput">Type:</label>
-                                                                        <input type="text" id="typeInput"
-                                                                                placeholder="Type">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="justificationInput">Justification:</label>
-                                                                        <input type="text" id="justificationInput"
-                                                                                placeholder="Justification">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="timeFrameInput">Time
-                                                                                Frame:</label>
-                                                                        <input type="text" id="timeFrameInput"
-                                                                                placeholder="Time Frame">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="engineFlightInput">Engine
-                                                                                or Flight:</label>
-                                                                        <input type="text" id="engineFlightInput"
-                                                                                placeholder="Engine or Flight">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="narrativeInput">Narrative:</label>
-                                                                        <textarea type="text" id="narrativeInput"
-                                                                                placeholder="Narrative" rows="4"
-                                                                                cols="30"></textarea>
-                                                                </div>
-                                                        </div>
-                                                </div>
-
-                                                <div id="partInputContainer" class="hidden">
-                                                        <div class="expand-label organize">
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="partPlaneSNInput">Plane
-                                                                                Serial Number:</label>
-                                                                        <input type="text" id="partPlaneSNInput"
-                                                                                placeholder="planeSN">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="partMDSInput">MDS:</label>
-                                                                        <input type="text" id="partMDSInput"
-                                                                                placeholder="MDS">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="equipmentIDInput">Equipment
-                                                                                ID:</label>
-                                                                        <input type="text" id="equipmentIDInput"
-                                                                                placeholder="Equipment ID">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="partSerialNumberInput">Part
-                                                                                Serial Number:</label>
-                                                                        <input type="text" id="partSerialNumberInput"
-                                                                                placeholder="Part Serial Number">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="partNumberInput">Part
-                                                                                Number:</label>
-                                                                        <input type="text" id="partNumberInput"
-                                                                                placeholder="Part Serial Number">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="partNarrativeInput">Narrative:</label>
-                                                                        <textarea type="text" id="partNarrativeInput"
-                                                                                placeholder="Narrative" rows="4"
-                                                                                cols="30"></textarea>
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="catNumberInput">Cat
-                                                                                Number:</label>
-                                                                        <input type="text" id="catNumberInput"
-                                                                                placeholder="Cat Number">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="partCurrentTimeInput">Current
-                                                                                Time:</label>
-                                                                        <input type="text" id="partCurrentTimeInput"
-                                                                                placeholder="Current Time">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="partTimeRemainingInput">Time
-                                                                                Remaining:</label>
-                                                                        <input type="text" id="partTimeRemainingInput"
-                                                                                placeholder="Time Remaining">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="partDueTimeInput">Due
-                                                                                Time:</label>
-                                                                        <input type="text" id="partDueTimeInput"
-                                                                                placeholder="Due Time">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="partFrequencyInput">Frequency:</label>
-                                                                        <input type="text" id="partFrequencyInput"
-                                                                                placeholder="Frequency">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="partTypeInput">Type:</label>
-                                                                        <input type="text" id="partTypeInput"
-                                                                                placeholder="Type">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="partJustificationInput">Justification:</label>
-                                                                        <input type="text" id="partJustificationInput"
-                                                                                placeholder="Justification">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="partTimeFrameInput">Time
-                                                                                Frame:</label>
-                                                                        <input type="text" id="partTimeFrameInput"
-                                                                                placeholder="Time Frame">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b"
-                                                                                for="partEngineFlightInput">Engine
-                                                                                or Flight:</label>
-                                                                        <input type="text" id="partEngineFlightInput"
-                                                                                placeholder="Engine or Flight">
-                                                                </div>
-                                                                <div class="colmflex">
-                                                                        <label class="required-b" for="wucLcnInput">Work
-                                                                                Unit Code/
-                                                                                Logistics Control
-                                                                                Number:</label>
-                                                                        <input type="text" id="wucLcnInput"
-                                                                                placeholder="WUC LCN">
-                                                                </div>
-
-                                                        </div>
-                                                </div>
-                                                <button class="buttonPrev" type="button"
-                                                        onclick="prevStep(2)">Previous</button>
-                                                <button class="buttonSaveCal" id="buttonSaveC">Save</button>
-                                        </div>
-                                </div>
-                        </div>
-                </div>
-        </div>
-
-        <!-- display event and edits -->
-        <div id="eventModal" class="modal">
+{% block after %}
+<!-- First Modal -->
+<div class="modal fade modal-xl" id="modal1" tabindex="-1" aria-labelledby="modal1Label" aria-hidden="false">
+        <div class="modal-dialog">
                 <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <h3 id="eventTitle"></h3>
-                        <p id="eventStart"></p>
-                        <p id="eventEnd"></p>
-                        <p id="eventMaintenance"></p>
-                        <button class="buttonSaveCal" id="editButton">Edit</button>
-                        <div id="editForm" style="display: none;">
-                                <div>
-                                        <p>Title: <input type="text" id="eventTitleInput" placeholder="Event Title"></p>
+                        <div class="modal-header">
+                                <h4 class="modal-title" id="modal1Label">Calendar Information</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                                <div class="container mb-3">
+                                        <i class="bi bi-info-circle required"> An asterisk indicates a required
+                                                field</i>
                                 </div>
-                                <div>
-                                        <p>Start: <input type="date" id="eventStartInput" placeholder="Event Start">
-                                        </p>
-                                </div>
-                                <div>
-                                        <p>End: <input type="date" id="eventEndInput" placeholder="Event End"></p>
-                                </div>
-                                <div id="eventMaintenanceInput"></div>
-                                <button class="buttonSaveCal" id="saveButton">Save</button>
-                                <button class="buttonCancle" id="cancelButton">Cancel</button>
+                                <form action="{% url 'calendars' %}" method="post" id="form3" class="needs-validation"
+                                        novalidate>
+                                        <div class="container">
+                                                <div class="row g-4">
+                                                        <div class="col-md-6">
+                                                                <label for="title"
+                                                                        class="form-label required">Title</label>
+                                                                <input type="text" class="form-control"
+                                                                        placeholder="A0039 Component Repair"
+                                                                        aria-label="title" name="title" id="title"
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Start
+                                                                        Date</label>
+                                                                <input type="Date" class="form-control" placeholder=""
+                                                                        aria-label="Start Date" name="start" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">End
+                                                                        Date</label>
+                                                                <input type="Date" class="form-control" placeholder=""
+                                                                        aria-label="" name="end" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Julian
+                                                                        Date</label>
+                                                                <input type="text" class="form-control"
+                                                                        placeholder="24267" aria-label=""
+                                                                        name="JulianDate" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Engine
+                                                                        Hours</label>
+                                                                <input type="text" class="form-control" placeholder="2"
+                                                                        aria-label="" name="EHours" required>
+                                                                <div class="form-text">
+                                                                        Engine Hours are limited to ensure optimal
+                                                                        condition for each aircraft.
+                                                                </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Flight
+                                                                        Hours</label>
+                                                                <input type="text" class="form-control" placeholder="3"
+                                                                        aria-label="" name="FHours" required>
+                                                                <div class="form-text">
+                                                                        Flight Hours are limited to ensure optimal
+                                                                        condition for each aircraft.
+                                                                </div>
+                                                        </div>
+                                                        <input type="hidden" name="GeoLoc" value="{{ geoloc }}">
+                                                        <input type="hidden" name="PartMaintenanceID"
+                                                                id="PartMaintenanceID" value="">
+                                                        <input type="hidden" name="PlaneMaintenanceID"
+                                                                id="PlaneMaintenanceID" value="">
+                                                        <input type="hidden" name="MDS" id="calendarMDS" value="">
+                                                        <input type="hidden" name="TailNumber" id="calTailNum" value="">
+                                                        <input type="hidden" name="ResourceID" id="calResID" value="">
+                                                </div>
+                                        </div>
+                                </form>
+                        </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                                        aria-label="Close">Close</button>
+                                <button type="button" class="btn btn-success" id="toggleToModal2">Next</button>
                         </div>
                 </div>
         </div>
+</div>
 
-        <footer class="footer">
-                {% load static %}<img src="ROUSApp/static/images/AirForceLogoBlack.png" alt="Air Force Logo">
+<!-- Second Modal -->
+<div class="modal fade modal-xl" id="modal2" tabindex="-1" aria-labelledby="modal2Label" aria-hidden="true">
+        <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="modal-header">
+                                <h4 class="modal-title" id="modal2Label">Plane Information</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                                <div class="container mb-3">
+                                        <i class="bi bi-info-circle required"> An asterisk indicates a required
+                                                field</i>
+                                </div>
 
-        </footer>
-        <!-- Bootstrap JavaScript -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+                                <div class="container">
+                                        <form class="needs-validation" novalidate>
+                                                <div class="mb-3 col-md-6">
+                                                        <label for="" class="form-label required">Tail Number</label>
+                                                        <select name="tailNumber" id="tailNumberSelect"
+                                                                class="form-select" required>
+                                                                <option selected disabled value="">Select Tail Number
+                                                                </option>
+                                                                {% for resource in resources %}
+                                                                <option value="{{ resource.ResourceID }}">
+                                                                        {{ resource.TailNumber }}</option>
+                                                                {% endfor %}
+                                                        </select>
+                                                </div>
+                                        </form>
+                                        <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" id="flexCheckDefault">
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                        Tail Number Not Found!
+                                                </label>
+                                        </div>
+                                        <form action="{% url 'planes' %}" method="post" id="form1"
+                                                class="needs-validation" novalidate>
+                                                {% csrf_token %}
+                                                <div class="row g-3">
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Plane Serial
+                                                                        Number</label>
+                                                                <input type="text" class="form-control"
+                                                                        id="planeSerialNumber" name="PlaneSN"
+                                                                        placeholder="07-5204" aria-label="" disabled
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">MDS</label>
+                                                                <input type="text" class="form-control" id="mds"
+                                                                        placeholder="MC-111J" name="MDS" aria-label=""
+                                                                        disabled required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Tail
+                                                                        Number</label>
+                                                                <input type="text" class="form-control" id="tailNumber"
+                                                                        placeholder="A0039" aria-label=""
+                                                                        name="TailNumber" disabled required>
+                                                        </div>
+                                                        <input type="hidden" id="location" name="GeoLoc"
+                                                                value="{{ geoloc }}">
+                                                </div>
+                                        </form>
+                                </div>
 
-</html>
+                        </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-light" id="toggleToModal1">Prev</button>
+                                <button type="button" class="btn btn-success" id="toggleToModal3">Next</button>
+                        </div>
+                </div>
+        </div>
+</div>
+
+<!-- Third Modal -->
+<div class="modal fade modal-xl" id="modal3" tabindex="-1" aria-labelledby="modal2Label" aria-hidden="true">
+        <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="modal-header">
+                                <h5 class="modal-title" id="modal2Label">Maintenance Information</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                                <div class="container mb-3">
+                                        <i class="bi bi-info-circle required"> An asterisk indicates a required
+                                                field</i>
+                                </div>
+                                <div class="container mb-3">
+                                        <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="inlineRadioOptions"
+                                                        id="inlineRadio1" value="option1" checked>
+                                                <label class="form-check-label" for="inlineRadio1">Plane</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="inlineRadioOptions"
+                                                        id="inlineRadio2" value="option2">
+                                                <label class="form-check-label" for="inlineRadio2">Part</label>
+                                        </div>
+                                </div>
+                                <div class="container">
+                                        <form action="{% url 'plane maintenance' %}" method="POST" id="planeForm"
+                                                class="needs-validation" novalidate>
+                                                {% csrf_token %}
+                                                <div class="row g-3">
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Plane Serial
+                                                                        Number</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        name="PlaneSN" placeholder="07-5204"
+                                                                        aria-label="" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">MDS</label>
+                                                                <input type="text" class="form-control" id="planeMds"
+                                                                        placeholder="MC-111J" name="MDS" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Current
+                                                                        Time</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="200.0" name="CrntTime"
+                                                                        aria-label="" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Time
+                                                                        Remaining</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="145.0" name="TimeRemain"
+                                                                        aria-label="" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Due
+                                                                        Time</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="10.0" name="DueTime" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for=""
+                                                                        class="form-label required">Frequency</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="111" name="Freq" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Type</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="b" name="Type" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for=""
+                                                                        class="form-label required">Justification</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="52024" name="JST" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Time
+                                                                        Frame</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="23" name="TFrame" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Engine or
+                                                                        Flight</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="Engine" name="E_F" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for=""
+                                                                        class="form-label required">Narrative</label>
+                                                                <textarea class="form-control" id="" rows="3"
+                                                                        placeholder="Brief description on what maintenance is being done and why."
+                                                                        name="Narrative" aria-label=""
+                                                                        required></textarea>
+                                                        </div>
+                                                        <input type="hidden" id="planeTitle" name="title" value="">
+                                                </div>
+                                        </form>
+                                        <form action="{% url 'part maintenance' %}" method="POST" id="partForm"
+                                                class="needs-validation" novalidate>
+                                                <div class="row g-3">
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Plane Serial
+                                                                        Number</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        name="PlaneSN" placeholder="07-5204"
+                                                                        aria-label="" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">MDS</label>
+                                                                <input type="text" class="form-control" id="partMds"
+                                                                        placeholder="MC-111J" name="MDS" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Equipment
+                                                                        ID</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="4AA0A00000000" name="EQP_ID"
+                                                                        aria-label="" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Part Serial
+                                                                        Number</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="0000004582" name="PartSN"
+                                                                        aria-label="" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Part
+                                                                        Number</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="69J13060-9" name="PartNum"
+                                                                        aria-label="" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Cat
+                                                                        Number</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="230170024" name="CatNum"
+                                                                        aria-label="" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Current
+                                                                        Time</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="200.0" name="CrntTime"
+                                                                        aria-label="" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Time
+                                                                        Remaining</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="145.0" name="TimeRemain"
+                                                                        aria-label="" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Due
+                                                                        Time</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="10.0" name="DueTime" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for=""
+                                                                        class="form-label required">Frequency</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="111" name="Freq" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Type</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="b" name="Type" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for=""
+                                                                        class="form-label required">Justification</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="52024" name="JST" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Time
+                                                                        Frame</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="23" name="TFrame" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Engine or
+                                                                        Flight</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="Engine" name="E_F" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for="" class="form-label required">Work Unit
+                                                                        Code/Logic Control Number</label>
+                                                                <input type="text" class="form-control" id=""
+                                                                        placeholder="156" name="WUC_LCN" aria-label=""
+                                                                        required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                                <label for=""
+                                                                        class="form-label required">Narritive</label>
+                                                                <textarea class="form-control" id="" rows="3"
+                                                                        placeholder="Brief description on what maintenance is being done and why."
+                                                                        name="Narrative" aria-label=""
+                                                                        required></textarea>
+                                                        </div>
+                                                        <input type="hidden" id="partTitle" name="title" value="">
+                                                </div>
+                                        </form>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-light" id="toggleToModal23">Prev</button>
+                                <button type="button" class="btn btn-success" id="submitBtn">Submit</button>
+                        </div>
+                </div>
+        </div>
+</div>
+
+<!-- click to view info -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="modal-header">
+                                <div class="container">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Event</h1>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                        id="closeModal"></button>
+
+                        </div>
+                        <div class="modal-body">
+                                <div class="container" id="mainInfo">
+                                        <h3 class="" id="eventTitle"></h3>
+                                        <p class="fs-4" id="eventMaintenance"></p>
+                                </div>
+                                <div class="container visually-hidden" id="editInfo">
+                                        <div class="container mb-3">
+                                                <i class="bi bi-info-circle required"> An asterisk indicates a required
+                                                        field</i>
+                                        </div>
+                                        <div class="container">
+                                                <form action="" id="editCal" method="" class="edit-needs-validation"
+                                                        novalidate>
+                                                        <div>
+                                                                <label for="editTitle"
+                                                                        class="required form-label">Title</label>
+                                                                <input type="text" name="title" id="editTitle" value=""
+                                                                        class="form-control" required>
+                                                        </div>
+                                                        <div>
+                                                                <label for="editStart"
+                                                                        class="required form-label">Start</label>
+                                                                <input type="date" name="start" id="editStart" value=""
+                                                                        class="form-control" required>
+                                                        </div>
+                                                        <div>
+                                                                <label for="editEnd"
+                                                                        class="required form-label">End</label>
+                                                                <input type="date" name="end" id="editEnd" value=""
+                                                                        class="form-control" required>
+                                                        </div>
+                                                </form>
+                                        </div>
+                                        <div class="container">
+                                                <form action="" id="editMat" method="" class="edit-needs-validation"
+                                                        novalidate>
+                                                        <div id="container">
+                                                                <div>
+                                                                        <label for="editNarr"
+                                                                                class="required form-label">Narrative</label>
+                                                                        <input type="text" name="Narrative"
+                                                                                id="editNarr" value=""
+                                                                                class="form-control" required>
+                                                                </div>
+                                                                <div>
+                                                                        <label for="editTR"
+                                                                                class="required form-label">Time
+                                                                                Remaining</label>
+                                                                        <input type="text" name="TimeRemain" id="editTR"
+                                                                                value="" class="form-control" required>
+                                                                </div>
+                                                                <div>
+                                                                        <label for="editFreq"
+                                                                                class="required form-label">Frequency</label>
+                                                                        <input type="text" name="Freq" id="editFreq"
+                                                                                value="" class="form-control" required>
+                                                                </div>
+                                                                <div>
+                                                                        <label for="editType"
+                                                                                class="required form-label">Type</label>
+                                                                        <input type="text" name="Type" id="editType"
+                                                                                value="" class="form-control" required>
+                                                                </div>
+                                                                <div>
+                                                                        <label for="editTF"
+                                                                                class="required form-label">Time
+                                                                                Frame</label>
+                                                                        <input type="text" name="TFrame" id="editTF"
+                                                                                value="" class="form-control" required>
+                                                                </div>
+                                                        </div>
+                                                </form>
+                                        </div>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                                        id="closeButt">Close</button>
+                                <button type="button" class="btn btn-primary" id="editButton">Edit</button>
+                                <button type="button" class="btn btn-primary visually-hidden"
+                                        id="subButton">Submit</button>
+                        </div>
+                </div>
+        </div>
+</div>
+
+<!-- click to Add Deploy -->
+<div class="modal fade" id="modalDeploy" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Deployment</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                                <div class="container mb-3">
+                                        <i class="bi bi-info-circle required"> An asterisk indicates a required
+                                                field</i>
+                                </div>
+                                <form action="" id="deployForm" class="deploy-needs-validation" novalidate>
+                                        <div class="container">
+                                                <div>
+                                                        <label for="title" class="form-label required">Title</label>
+                                                        <input class="form-control" type="text" name="title"
+                                                                placeholder="A0039 Deployed" aria-label="" required>
+                                                </div>
+                                                <div>
+                                                        <label for="start" class="form-label required">Start
+                                                                Date</label>
+                                                        <input class="form-control" type="date" name="start"
+                                                                aria-label="" required>
+                                                </div>
+                                                <div>
+                                                        <label for="end" class="form-label required">End Date</label>
+                                                        <input class="form-control" type="date" name="end" aria-label=""
+                                                                required>
+                                                </div>
+                                                <div>
+                                                        <label for="end" class="form-label required">Julian Date</label>
+                                                        <input class="form-control" type="text" name="JulianDate"
+                                                                placeholder="24267" required>
+                                                </div>
+                                                <div>
+                                                        <label for=" TailNumber" class="form-label required">Tail
+                                                                Number</label>
+                                                        <input class="form-control" type="text" name="TailNumber"
+                                                                placeholder="A0039" required>
+                                                </div>
+                                                <input type="hidden" name="GeoLoc" value="{{ geoloc }}">
+                                        </div>
+                                </form>
+                        </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-success" id="deployButton">Submit</button>
+                        </div>
+                </div>
+        </div>
+</div>
+
+
+{% endblock %}
+
+{% load static %}
+{% block scripts %}
+<script>
+        const LICENSE_KEY = "{{ license_key }}";
+</script>
+<script src="{% static 'js/main.js' %}"></script>
+<script>
+        // Define the successCallback and failureCallback functions
+        function successCallback() {
+                console.log('Data update successful.');
+                // You can add any other logic or actions you want to perform on success.
+        }
+
+        function failureCallback(error) {
+                console.error('Data update failed:', error);
+                // You can add any other logic or actions you want to perform on failure.
+        }
+
+        // Get the 'geoloc' parameter from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const TheGeoLoc = urlParams.get('geoloc');
+
+        // Call the updateData function with the appropriate arguments
+        updateData(successCallback, failureCallback, TheGeoLoc);
+</script>
+<script type="module" src="{% static 'js/validate.js' %}"></script>
+{% endblock %}
