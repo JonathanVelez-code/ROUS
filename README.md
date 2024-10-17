@@ -1,6 +1,10 @@
 # ROUS
 
-## How to set up project
+## Demo
+
+Online demo: https://rousapp-a8a46816adf1.herokuapp.com/
+
+## Install
 
 1. create virtual environment
 
@@ -8,14 +12,14 @@
 python -m venv env
 ```
 
-2. activate on environment Windows (PS: check env file becuase Scrips folder can be named as bin instead of Scrips)
+2. activate on environment Windows (PS: check env file because Scrips folder can be named as bin instead of Scrips)
 
 ```bash
-env\Scripts\Activate.ps1   (powershell- used in VS Code)
+env\Scripts\Activate.ps1   (PowerShell- used in VS Code)
 env\Scripts\activate.bat    (cmd)
 ```
 
-3. install django in the virtual environment.
+3. install Django in the virtual environment.
 
 ```bash
 pip install django
@@ -31,7 +35,13 @@ other: after installing new packages please update the requirements.txt shown be
 pip freeze > requirements.txt
 ```
 
-# For API,
+## API
 
-First, in the my_django_app, activate the virtual environment with the command: env\Scripts\activate
-Next go into the ROUS directory, and then to run the server, do the command: python manage.py runserver
+First, in the my_django_app, activate the virtual environment with the command:
+```bash
+ env\Scripts\activate
+```
+Next, go into the ROUS directory, and then to run the server, do the command:
+```bash
+python manage.py runserver
+```
